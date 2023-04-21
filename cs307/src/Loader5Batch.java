@@ -1,9 +1,13 @@
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.sql.*;
+/*
+数据传输上提高了效率，
+ */
 
 public class Loader5Batch {
     private static final int BATCH_SIZE = 1000;
@@ -70,7 +74,7 @@ public class Loader5Batch {
 
     private static List<String> loadTXTFile() {
         try {
-            return Files.readAllLines(Path.of("resources/movies.txt"));
+            return Files.readAllLines(Paths.get("resources/movies.txt"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

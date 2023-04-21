@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c5704589-1fbe-49b0-a577-937c8c62ee43" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../proj_1/src/Loader5Batch.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../proj_1/src/loader_try.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader1Awful.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader1Awful.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader2Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader2Connect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader3Prepare.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader3Prepare.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader4Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader4Transaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader5Batch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader5Batch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lab的文件/project data and scripts/project data and scripts/replies.json" beforeDir="false" afterPath="$PROJECT_DIR$/../lab的文件/project data and scripts/project data and scripts/replies.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj_1/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj_1/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj_1/hhhh.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj_1/out/production/proj_1_java/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/out/production/proj_1_java/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../proj_1/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../数据库lab.md" beforeDir="false" afterPath="$PROJECT_DIR$/../数据库lab.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2OY36rYAMrbNbj1egkD5ItY3N5H" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\AAAA\study\cs307数据库\proj_1\lib" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\AAAA\study\cs307数据库\proj_1_Maven\lib" />
+      <recent name="D:\AAAA\study\cs307数据库\proj_1_Maven\src\main\java" />
+      <recent name="D:\AAAA\study\cs307数据库\proj_1\.idea" />
+      <recent name="D:\AAAA\study\cs307数据库\proj_1\src" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JAR Application.fastjson-1.2.79.jar">
+    <configuration name="Loader5Batch" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Loader5Batch" />
+      <module name="proj_1_java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="proj_1_java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fastjson-1.2.79.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/lib/fastjson-1.2.79.jar" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JAR Application.fastjson-1.2.79.jar" />
+        <item itemvalue="Application.Loader5Batch" />
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c5704589-1fbe-49b0-a577-937c8c62ee43" name="Changes" comment="" />
+      <created>1681723517152</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1681723517152</updated>
+      <workItem from="1681723518329" duration="5575000" />
+      <workItem from="1681806541345" duration="48000" />
+      <workItem from="1681806608213" duration="146000" />
+      <workItem from="1681893653333" duration="3531000" />
+      <workItem from="1681908137213" duration="500000" />
+      <workItem from="1681959487508" duration="316000" />
+      <workItem from="1681979916581" duration="4493000" />
+      <workItem from="1682075220017" duration="4501000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>

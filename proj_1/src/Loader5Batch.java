@@ -1,12 +1,17 @@
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.*;
 import java.util.List;
 import java.util.Properties;
-import java.sql.*;
-//DBMS在解析SQL语句上加速了
-public class Loader3Prepare {
+/*
+数据传输上提高了效率，
+ */
+
+public class Loader5Batch {
+    private static final int BATCH_SIZE = 1000;
     private static Connection con = null;
     private static PreparedStatement stmt = null;
 
@@ -17,12 +22,14 @@ public class Loader3Prepare {
             System.err.println("Cannot find the Postgres driver. Check CLASSPATH.");
             System.exit(1);
         }
-        String url = "jdbc:postgresql://" + prop.getProperty("host") + "/" + prop.getProperty("database");
+        //jdbc:postgresql://localhost:5432/proj_1
+        String url = "jdbc:postgresql://" + prop.getProperty("localhost:5432") + "/" + prop.getProperty("proj_1");
         try {
             con = DriverManager.getConnection(url, prop);
             if (con != null) {
                 System.out.println("Successfully connected to the database "
                         + prop.getProperty("database") + " as " + prop.getProperty("user"));
+                con.setAutoCommit(false);
             }
         } catch (SQLException e) {
             System.err.println("Database connection failed");
@@ -33,8 +40,8 @@ public class Loader3Prepare {
 
     public static void setPrepareStatement() {
         try {
-            stmt = con.prepareStatement("INSERT INTO public.movies (movieid, title, country, year_released, runtime) " +
-                    "VALUES (?,?,?,?,?);");
+            stmt = con.prepareStatement("INSERT INTO public.post (postID, title, category, content, postingTime,postingCity,Author,authorRegistrationTime,authorID,authoPhone,authorFollowedBy,authorFavorite,authorShared,authorLiked) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -59,7 +66,7 @@ public class Loader3Prepare {
     private static Properties loadDBUser() {
         Properties properties = new Properties();
         try {
-            properties.load(new InputStreamReader(new FileInputStream("resources/dbUser.properties")));
+            properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\lab的文件\\data\\data\\dbUser.properties")));
             return properties;
         } catch (IOException e) {
             System.err.println("can not find db user file");
@@ -69,7 +76,7 @@ public class Loader3Prepare {
 
     private static List<String> loadTXTFile() {
         try {
-            return Files.readAllLines(Paths.get("resources/movies.txt"));
+            return Files.readAllLines(Paths.get("D:\\AAAA\\study\\cs307数据库\\proj_1\\src\\posts.json"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -97,6 +104,7 @@ public class Loader3Prepare {
             try {
                 stmt0 = con.createStatement();
                 stmt0.executeUpdate("drop table movies;");
+                con.commit();
                 stmt0.executeUpdate("create table if not exists movies(\n" +
                         "movieid serial not null\n" +
                         "constraint movies_pkey\n" +
@@ -110,6 +118,7 @@ public class Loader3Prepare {
                         "constraint movies_title_country_year_released_key\n" +
                         "unique (title, country, year_released)\n" +
                         ");");
+                con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -118,6 +127,7 @@ public class Loader3Prepare {
     }
 
     public static void main(String[] args) {
+
         Properties prop = loadDBUser();
         List<String> lines = loadTXTFile();
 
@@ -126,25 +136,39 @@ public class Loader3Prepare {
         clearDataInTable();
         closeDB();
 
-        int cnt = 0;
 
+        int cnt = 0;
         long start = System.currentTimeMillis();
         openDB(prop);
         setPrepareStatement();
-        for (String line : lines) {
-            if (line.startsWith("movieid"))
-                continue; // skip the first line
-            loadData(line);//do insert command
-            cnt++;
-            if (cnt % 1000 == 0) {
-                System.out.println("insert " + 1000 + " data successfully!");
+        try {
+            for (String line : lines) {
+                if (line.startsWith("movieid"))
+                    continue; // skip the first line
+                loadData(line);//do insert command
+                if (cnt % BATCH_SIZE == 0) {
+                    stmt.executeBatch();
+                    System.out.println("insert " + BATCH_SIZE + " data successfully!");
+                    stmt.clearBatch();
+                }
+                cnt++;
             }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+                System.out.println("insert " + cnt % BATCH_SIZE + " data successfully!");
+
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         closeDB();
         long end = System.currentTimeMillis();
         System.out.println(cnt + " records successfully loaded");
         System.out.println("Loading speed : " + (cnt * 1000L) / (end - start) + " records/s");
+
     }
 }
 

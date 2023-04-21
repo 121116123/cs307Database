@@ -2,6 +2,7 @@
   <library name="fastjson-1.2.79">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/fastjson-1.2.79.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.10.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
