@@ -64,7 +64,7 @@ public class Loader5Batch {
     private static Properties loadDBUser() {
         Properties properties = new Properties();
         try {
-            properties.load(new InputStreamReader(new FileInputStream("resources/dbUser.properties")));
+            properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\cs307\\resourses\\dbUser.properties")));
             return properties;
         } catch (IOException e) {
             System.err.println("can not find db user file");
@@ -74,7 +74,7 @@ public class Loader5Batch {
 
     private static List<String> loadTXTFile() {
         try {
-            return Files.readAllLines(Paths.get("resources/movies.txt"));
+            return Files.readAllLines(Paths.get("D:\\AAAA\\study\\cs307数据库\\cs307\\resourses\\movies.txt"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,6 +131,7 @@ public class Loader5Batch {
 
         // Empty target table
         openDB(prop);
+        System.out.println("open结束");
         clearDataInTable();
         closeDB();
 

@@ -3,7 +3,8 @@ import java.util.List;
 public class Post {
     private int postID;
     private String title;
-    private List<String> category;
+//    private List<String> category;
+private List<String> category;
     private String content;
     private String postingTime;
     private String postingCity;
