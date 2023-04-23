@@ -105,7 +105,7 @@ public class Loader5_posts {
                 stmt.setTimestamp(5, post.getPostingTime());
                 stmt.setString(6, post.getPostingCity());
                 stmt.setString(7, post.getAuthor());
-                stmt.setString(8, post.getAuthorRegistrationTime());
+                stmt.setTimestamp(8, post.getAuthorRegistrationTime());
                 stmt.setString(9, post.getAuthorID());
                 stmt.setString(10, post.getAuthoPhone());
                 Array AuthorFollowedBy = con.createArrayOf("VARCHAR", post.getAuthorFollowedBy().toArray());
@@ -139,7 +139,7 @@ public class Loader5_posts {
                         "    postingTime            timestamp ,\n" +
                         "    postingCity            varchar,\n" +
                         "    Author                 varchar,\n" +
-                        "    authorRegistrationTime varchar,\n" +
+                        "    authorRegistrationTime timestamp ,\n" +
                         "    authorID               varchar,\n" +
                         "    authoPhone             varchar,\n" +
                         "    authorFollowedBy       varchar(255)[],\n" +
@@ -167,6 +167,7 @@ public class Loader5_posts {
                 Posts post = gson.fromJson(reader, Posts.class);
 //                System.out.println(post.getPostID());
                 posts.add(post);
+//                System.out.println(post.getPostingTime());
             }
             reader.endArray(); // 读取JSON数组的结尾
         } catch (IOException e) {

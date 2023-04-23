@@ -11,7 +11,7 @@ public class Posts {
     private Timestamp postingTime;
     private String postingCity;
     private String Author;
-    private String authorRegistrationTime;
+    private Timestamp authorRegistrationTime;
     private String authorID;
     private String authoPhone;
     private List<String> authorFollowedBy;
@@ -95,11 +95,11 @@ public class Posts {
         Author = author;
     }
 
-    public String getAuthorRegistrationTime() {
+    public Timestamp getAuthorRegistrationTime() {
         return authorRegistrationTime;
     }
 
-    public void setAuthorRegistrationTime(String authorRegistrationTime) {
+    public void setAuthorRegistrationTime(Timestamp authorRegistrationTime) {
         this.authorRegistrationTime = authorRegistrationTime;
     }
 
