@@ -1,12 +1,14 @@
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 
-public class Post {
+public class Posts {
     private int postID;
     private String title;
-//    private List<String> category;
-private List<String> category;
+    //    private List<String> category;
+    private List<String> category;
     private String content;
-    private String postingTime;
+    private Timestamp postingTime;
     private String postingCity;
     private String Author;
     private String authorRegistrationTime;
@@ -69,11 +71,11 @@ private List<String> category;
         this.content = content;
     }
 
-    public String getPostingTime() {
+    public Timestamp getPostingTime() {
         return postingTime;
     }
 
-    public void setPostingTime(String postingTime) {
+    public void setPostingTime(Timestamp postingTime) {
         this.postingTime = postingTime;
     }
 

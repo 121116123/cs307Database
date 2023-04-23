@@ -605,7 +605,8 @@ the new running example
 #### first normal form 1NF 第一范式
 
 1. 原子性：一列里面最好不要是多值
-2. ![image-20230411153821419](image-20230411153821419.png)这样就不行
+   1. ![image-20230411153821419](image-20230411153821419.png)这样就不行
+
 
 #### 2NF
 

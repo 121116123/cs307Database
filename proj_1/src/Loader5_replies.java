@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +13,11 @@ import java.util.Properties;
 数据传输上提高了效率，
  */
 
-public class Loader5_posts {
+public class Loader5_replies {
     private static final int BATCH_SIZE = 1000;
     private static Connection con = null;
     private static PreparedStatement stmt = null;
-    public static List<Posts> posts = new ArrayList<>();
+    public static List<Replies> replies = new ArrayList<>();
 
 
     private static void openDB(Properties prop) {
@@ -49,8 +47,8 @@ public class Loader5_posts {
 
     public static void setPrepareStatement() {
         try {
-            stmt = con.prepareStatement("INSERT INTO public.posts (postID, title, category, content, postingTime,postingCity,Author,authorRegistrationTime,authorID,authoPhone,authorFollowedBy,authorFavorite,authorShared,authorLiked) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            stmt = con.prepareStatement("INSERT INTO public.Replies (postID, replyContent, replyStars, replyAuthor, secondaryReplyContent,secondaryReplyStars,secondaryReplyAuthor) " +
+                    "VALUES (?,?,?,?,?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -93,29 +91,17 @@ public class Loader5_posts {
 //        }
 //    }
 
-    private static void loadData(Posts post) {
+    private static void loadData(Replies replies) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
-                stmt.setInt(1, post.getPostID());
-                stmt.setString(2, post.getTitle());
-                Array categoryArray = con.createArrayOf("VARCHAR", post.getCategory().toArray());
-                stmt.setArray(3, categoryArray);
-                stmt.setString(4, post.getContent());
-                stmt.setTimestamp(5, post.getPostingTime());
-                stmt.setString(6, post.getPostingCity());
-                stmt.setString(7, post.getAuthor());
-                stmt.setString(8, post.getAuthorRegistrationTime());
-                stmt.setString(9, post.getAuthorID());
-                stmt.setString(10, post.getAuthoPhone());
-                Array AuthorFollowedBy = con.createArrayOf("VARCHAR", post.getAuthorFollowedBy().toArray());
-                stmt.setArray(11, AuthorFollowedBy);
-                Array AuthorFavorite = con.createArrayOf("VARCHAR", post.getAuthorFavorite().toArray());
-                stmt.setArray(12, AuthorFavorite);
-                Array AuthorShared = con.createArrayOf("VARCHAR", post.getAuthorShared().toArray());
-                stmt.setArray(13, AuthorShared);
-                Array AuthorLiked = con.createArrayOf("VARCHAR", post.getAuthorLiked().toArray());
-                stmt.setArray(14, AuthorLiked);
+                stmt.setInt(1, replies.getPostID());
+                stmt.setString(2, replies.getReplyContent());
+                stmt.setInt(3, replies.getReplyStars());
+                stmt.setString(4, replies.getReplyAuthor());
+                stmt.setString(5, replies.getSecondaryReplyContent());
+                stmt.setInt(6, replies.getSecondaryReplyStars());
+                stmt.setString(7, replies.getSecondaryReplyAuthor());
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -128,25 +114,17 @@ public class Loader5_posts {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table posts;");
+                stmt0.executeUpdate("drop table replies;");
                 con.commit();
-                stmt0.executeUpdate("create table posts\n" +
+                stmt0.executeUpdate("create table Replies\n" +
                         "(\n" +
-                        "    postID                 int,\n" +
-                        "    title                  varchar,\n" +
-                        "    category               varchar(255)[],\n" +
-                        "    content                varchar,\n" +
-                        "    postingTime            varchar,\n" +
-                        "    postingCity            varchar,\n" +
-                        "    Author                 varchar,\n" +
-                        "    authorRegistrationTime varchar,\n" +
-                        "    authorID               varchar,\n" +
-                        "    authoPhone             varchar,\n" +
-                        "    authorFollowedBy       varchar(255)[],\n" +
-                        "    authorFavorite         varchar(255)[],\n" +
-                        "    authorShared           varchar(255)[],\n" +
-                        "    authorLiked            varchar(255)[]\n" +
-                        "\n" +
+                        "    postID                int,\n" +
+                        "    replyContent          varchar,\n" +
+                        "    replyStars            int,\n" +
+                        "    replyAuthor           varchar,\n" +
+                        "    secondaryReplyContent varchar,\n" +
+                        "    secondaryReplyStars   int,\n" +
+                        "    secondaryReplyAuthor  varchar\n" +
                         ");");
                 con.commit();
                 stmt0.close();
@@ -159,14 +137,14 @@ public class Loader5_posts {
     public static void main(String[] args) {
         System.out.println("zuikaishi");
         Properties prop = loadDBUser();
-        String fileName = "D:\\AAAA\\study\\cs307数据库\\proj_1\\resources\\posts.json";
+        String fileName = "D:\\AAAA\\study\\cs307数据库\\proj_1\\resources\\replies.json";
         try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
             Gson gson = new Gson();
             reader.beginArray(); // 读取JSON数组的开头
             while (reader.hasNext()) {
-                Posts post = gson.fromJson(reader, Posts.class);
+                Replies replies1 = gson.fromJson(reader, Replies.class);
 //                System.out.println(post.getPostID());
-                posts.add(post);
+                replies.add(replies1);
             }
             reader.endArray(); // 读取JSON数组的结尾
         } catch (IOException e) {
@@ -187,10 +165,10 @@ public class Loader5_posts {
         openDB(prop);
         setPrepareStatement();
         try {
-            for (Posts post : posts) {
+            for (Replies replies1 : replies) {
 //                if (line.startsWith("movieid"))
 //                    continue; // skip the first line
-                loadData(post);//do insert command
+                loadData(replies1);//do insert command
                 if (cnt % BATCH_SIZE == 0&&cnt!=0) {
                     stmt.executeBatch();
                     System.out.println("insert " + BATCH_SIZE + " data successfully!");
