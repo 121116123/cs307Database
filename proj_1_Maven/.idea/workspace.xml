@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5704589-1fbe-49b0-a577-937c8c62ee43" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../proj_1/src/Loader5Batch.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../proj_1/src/loader_try.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader1Awful.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader1Awful.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader2Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader2Connect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader3Prepare.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader3Prepare.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader4Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader4Transaction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cs307/src/Loader5Batch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../cs307/src/Loader5Batch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lab的文件/project data and scripts/project data and scripts/replies.json" beforeDir="false" afterPath="$PROJECT_DIR$/../lab的文件/project data and scripts/project data and scripts/replies.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_1/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_1/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_1/hhhh.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_1/out/production/proj_1_java/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/out/production/proj_1_java/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../proj_1/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../proj_1/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../数据库lab.md" beforeDir="false" afterPath="$PROJECT_DIR$/../数据库lab.md" afterDir="false" />
-    </list>
+    <list default="true" id="c5704589-1fbe-49b0-a577-937c8c62ee43" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,6 +92,7 @@
       <workItem from="1681959487508" duration="316000" />
       <workItem from="1681979916581" duration="4493000" />
       <workItem from="1682075220017" duration="4501000" />
+      <workItem from="1682184397993" duration="16000" />
     </task>
     <servers />
   </component>
