@@ -136,7 +136,7 @@ public class Loader5_posts {
                         "    title                  varchar,\n" +
                         "    category               varchar(255)[],\n" +
                         "    content                varchar,\n" +
-                        "    postingTime            varchar,\n" +
+                        "    postingTime            timestamp ,\n" +
                         "    postingCity            varchar,\n" +
                         "    Author                 varchar,\n" +
                         "    authorRegistrationTime varchar,\n" +
