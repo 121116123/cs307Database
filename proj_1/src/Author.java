@@ -3,6 +3,18 @@ import java.sql.Timestamp;
 public class Author {
     private String ID;
     private Timestamp registration_time;
+    private String phone;
+    private String name;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public String getID() {
         return ID;
@@ -28,5 +40,5 @@ public class Author {
         this.phone = phone;
     }
 
-    private String phone;
+
 }

@@ -146,7 +146,22 @@ FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY replyid ORDER BY id) AS row_num
 WHERE subreply.id = subquery.id;
 select *
 from subreply
-order by replyid,id;
+order by replyid, id;
+
+
+CREATE TABLE author_liked_posts
+(
+    authorid int,
+    postid   int,
+    PRIMARY KEY (authorid, postid)
+);
+
+INSERT INTO author_liked_posts (authorid, postid)
+SELECT a.id, p.postID
+FROM posts p,
+     author a
+WHERE CONCAT(',', p.authorLiked, ',') LIKE CONCAT('%,', CAST(a.authorid AS CHAR), ',%');
+
 
 --test
 
