@@ -265,11 +265,11 @@ public class Loader5_author {
                         "    phone是已给信息的\n" +
                         "    name是每种的author\n" +
                         "     */\n" +
-                        "    ID                varchar unique,\n" +
+                        "    ID                varchar unique primary key,\n" +
                         "    registration_time timestamp,\n" +
                         "    phone             varchar,\n" +
                         "    name              varchar not null\n" +
-                        ");\n");
+                        ");");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
