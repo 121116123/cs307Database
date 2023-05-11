@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.sql.*;
 /*
-数据传输上提高了效率，
+数据传输上提高了效率
  */
 
 public class Loader5Batch {
