@@ -2,6 +2,9 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/console.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/../../../../cs307_public_aircrafts.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/../../../../cs307_public_airlines.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/../../../../cs307_public_flights.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/../../../../filmdb_all.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/../../../../shenzhen_metro.sql" dialect="PostgreSQL" />
   </component>
