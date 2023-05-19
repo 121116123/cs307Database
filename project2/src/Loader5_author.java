@@ -48,10 +48,20 @@ public class Loader5_author {
         long range = latest.getTime() - offset + 1; // 时间戳范围
 
 
-        //favorite
+        //follow
         for (int i = 0; i < posts.size(); i++) {
             Posts posts1 = posts.get(i);
             for (int j = 0; j < posts1.getAuthorFollowedBy().size(); j++) {
+                boolean exist=false;
+                for (author value : authors) {
+                    if (value.getName().equals(posts1.getAuthorFollowedBy().get(j))) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (exist){
+                    continue;
+                }
                 author author = new author();
                 author.setName(posts1.getAuthorFollowedBy().get(j));
                 StringBuilder sb = new StringBuilder(id_length);
@@ -67,10 +77,20 @@ public class Loader5_author {
                 authors.add(author);
             }
         }
-        //
+        //favorite
         for (int i = 0; i < posts.size(); i++) {
             Posts posts1 = posts.get(i);
             for (int j = 0; j < posts1.getAuthorFavorite().size(); j++) {
+                boolean exist=false;
+                for (author value : authors) {
+                    if (value.getName().equals(posts1.getAuthorFavorite().get(j))) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (exist){
+                    continue;
+                }
                 author author = new author();
                 author.setName(posts1.getAuthorFavorite().get(j));
                 StringBuilder sb = new StringBuilder(id_length);
@@ -86,9 +106,20 @@ public class Loader5_author {
                 authors.add(author);
             }
         }
+        //shared
         for (int i = 0; i < posts.size(); i++) {
             Posts posts1 = posts.get(i);
             for (int j = 0; j < posts1.getAuthorShared().size(); j++) {
+                boolean exist=false;
+                for (author value : authors) {
+                    if (value.getName().equals(posts1.getAuthorShared().get(j))) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (exist){
+                    continue;
+                }
                 author author = new author();
                 author.setName(posts1.getAuthorShared().get(j));
                 StringBuilder sb = new StringBuilder(id_length);
@@ -105,9 +136,20 @@ public class Loader5_author {
             }
         }
 
+        //liked
         for (int i = 0; i < posts.size(); i++) {
             Posts posts1 = posts.get(i);
             for (int j = 0; j < posts1.getAuthorLiked().size(); j++) {
+                boolean exist=false;
+                for (author value : authors) {
+                    if (value.getName().equals(posts1.getAuthorLiked().get(j))) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (exist){
+                    continue;
+                }
                 author author = new author();
                 author.setName(posts1.getAuthorLiked().get(j));
                 StringBuilder sb = new StringBuilder(id_length);
@@ -124,8 +166,19 @@ public class Loader5_author {
             }
         }
 
+        //reply
         for (int i = 0; i < replies.size(); i++) {
             Replies reply = replies.get(i);
+            boolean exist=false;
+            for (author value : authors) {
+                if (value.getName().equals(reply.getReplyAuthor())) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (exist){
+                continue;
+            }
             author author = new author();
             author.setName(reply.getReplyAuthor());
             StringBuilder sb = new StringBuilder(id_length);
@@ -141,8 +194,20 @@ public class Loader5_author {
             authors.add(author);
         }
 
+
+        //subreply
         for (int i = 0; i < replies.size(); i++) {
             Replies reply = replies.get(i);
+            boolean exist=false;
+            for (author value : authors) {
+                if (value.getName().equals(reply.getSecondaryReplyAuthor())) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (exist){
+                continue;
+            }
             author author = new author();
             author.setName(reply.getSecondaryReplyAuthor());
             StringBuilder sb = new StringBuilder(id_length);
@@ -241,7 +306,7 @@ public class Loader5_author {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table author;");
+                stmt0.executeUpdate("drop table author cascade ;");
                 con.commit();
                 stmt0.executeUpdate("create table author\n" +
                         "(\n" +
@@ -266,7 +331,6 @@ public class Loader5_author {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-// 运行你的程序代码
 
         Properties prop = loadDBUser();
         Loader5_replies.main( args);

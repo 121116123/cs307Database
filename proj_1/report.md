@@ -68,7 +68,7 @@
    content 表示post的内容，是字符串类型；
    posting_time表示发布的时间，是Timestamp类型；
    posting_city表示发布的地点，是字符串类型；
-   category表示post的标签，是字符串组成的列表类型。
+   ==这个删掉了==category表示post的标签，是字符串组成的列表类型。
    post中的数据全部来自于由原始数据导入的《posts》。
 
 3. **reply**：表示某个帖子的一个回复，主键为id（int），是生成的自增id；
@@ -78,10 +78,10 @@
    content 表示回复内容，字符串类型；
    postid 表示回复的贴子的编号，是int类型，作为外键指向post中的id；
    stars 表示获得的星标数，int类型；
-   group_num 表示是某个帖子下的第几个回复，对于每个帖子来说，每个回复的group_num是唯一的，因此group_num+postid也可以定位到某个reply；
+   ==不要这个了==group_num 表示是某个帖子下的第几个回复，对于每个帖子来说，每个回复的group_num是唯一的，因此group_num+postid也可以定位到某个reply；
 
 4. **subreply**：表示一个二级回复，主键是id+replyid，其中id是对于每个reply的编号，一个reply下的subreply的id都不同；
-   属性有：id 表示是某个reply下的第几个二级回复；
+   属性有：==把id改成每个subreply都不一样了==id 表示是某个reply下的第几个二级回复；
    replyid 表示是对于那个reply的回复，int类型，作为外键指向reply的id； 
    author表示发布的作者，作为外键指向author的name
 
