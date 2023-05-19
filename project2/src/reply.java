@@ -1,6 +1,6 @@
 public class reply {
     private int postID;
-    private String authorID;
+    private String author;
     private int stars;
     private String content;
 
@@ -12,12 +12,12 @@ public class reply {
         this.postID = postID;
     }
 
-    public String getAuthorID() {
-        return authorID;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAuthorID(String authorID) {
-        this.authorID = authorID;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public int getStars() {

@@ -6,7 +6,6 @@ public class post {
     private String content;
     private Timestamp posting_time;
     private String posting_city;
-    private String category;
 
     public void setID(int ID) {
         this.ID = ID;
@@ -28,9 +27,6 @@ public class post {
         this.posting_city = posting_city;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public int getID() {
         return ID;
@@ -52,7 +48,5 @@ public class post {
         return posting_city;
     }
 
-    public String getCategory() {
-        return category;
-    }
+
 }

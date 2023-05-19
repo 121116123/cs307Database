@@ -153,6 +153,8 @@ public class Loader5_posts {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         openDB(prop);
         clearDataInTable();
         closeDB();
