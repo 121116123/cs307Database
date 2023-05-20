@@ -12,9 +12,9 @@ import java.util.Properties;
 import java.util.Random;
 
 public class loader {
-    private static final int BATCH_SIZE = 1000;
-    private static Connection con = null;
-    private static PreparedStatement stmt = null;
+    public static final int BATCH_SIZE = 1000;
+    public static Connection con = null;
+    public static PreparedStatement stmt = null;
 
     public static List<Posts> posts_0 = new ArrayList<>();
     public static List<Replies> replies_0 = new ArrayList<>();
@@ -24,7 +24,7 @@ public class loader {
     public static List<subreply> subreplies = new ArrayList<>();
     public static List<category> categories = new ArrayList<>();
 
-    private static void openDB(Properties prop) {
+    public static void openDB(Properties prop) {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class loader {
     }
 
 
-    private static void closeDB() {
+    public static void closeDB() {
         if (con != null) {
             try {
                 if (stmt != null) {
@@ -123,7 +123,7 @@ public class loader {
         }
     }
 
-    private static Properties loadDBUser() {
+    public static Properties loadDBUser() {
         Properties properties = new Properties();
         try {
             properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\proj_1\\resources\\dbUser.properties")));
@@ -136,7 +136,7 @@ public class loader {
         }
     }
 
-    private static void loadData_author(author author) {
+    public static void loadData_author(author author) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -151,8 +151,7 @@ public class loader {
         }
     }
 
-    private static void loadData_post(post post) {
-        System.out.println("loaddatapost");
+    public static void loadData_post(post post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -168,7 +167,7 @@ public class loader {
         }
     }
 
-    private static void loadData_category(category category) {
+    public static void loadData_category(category category) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -180,7 +179,7 @@ public class loader {
         }
     }
 
-    private static void loadData_reply(reply reply) {
+    public static void loadData_reply(reply reply) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -197,7 +196,7 @@ public class loader {
     }
 
 
-    private static void loadData_subreply(subreply subreply) {
+    public static void loadData_subreply(subreply subreply) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
