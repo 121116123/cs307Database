@@ -1,8 +1,17 @@
 public class subreply {
+    private int id;
     private String content;
     private String author;
     private int stars;
-    private int postID;
+    private int replyid;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;
@@ -28,11 +37,11 @@ public class subreply {
         this.stars = stars;
     }
 
-    public int getPostID() {
-        return postID;
+    public int getReplyid() {
+        return replyid;
     }
 
-    public void setPostID(int postID) {
-        this.postID = postID;
+    public void setReplyid(int replyid) {
+        this.replyid = replyid;
     }
 }

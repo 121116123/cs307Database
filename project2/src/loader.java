@@ -61,6 +61,7 @@ public class loader {
 
     public static void setPrepareStatement_post() {
         try {
+            System.out.println("set pre post");
             stmt = con.prepareStatement("insert into post(id, title, content, posting_time, posting_city)  " +
                     "VALUES (?,?,?,?,?);");
         } catch (SQLException e) {
@@ -71,7 +72,7 @@ public class loader {
         }
     }
 
-    public static void setPrepareStatement_category(){
+    public static void setPrepareStatement_category() {
         try {
             stmt = con.prepareStatement("insert into category(content)  " +
                     "VALUES (?);");
@@ -85,8 +86,8 @@ public class loader {
 
     public static void setPrepareStatement_reply() {
         try {
-            stmt = con.prepareStatement("insert into reply(author, content, postID, stars)   " +
-                    "VALUES (?,?,?,?);");
+            stmt = con.prepareStatement("insert into reply(id,author, content, postID, stars)   " +
+                    "VALUES (?,?,?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -95,10 +96,11 @@ public class loader {
         }
     }
 
+    //这里有错，主要是replyid不好拿，要不改成replycontent？
     public static void setPrepareStatement_subreply() {
         try {
-            stmt = con.prepareStatement("insert into subreply(author, content, stars, replyid)    " +
-                    "VALUES (?,?,?,?);");
+            stmt = con.prepareStatement("insert into subreply(id,author, content, stars, replyid)\n" +
+                    "VALUES (?,?,?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -150,6 +152,7 @@ public class loader {
     }
 
     private static void loadData_post(post post) {
+        System.out.println("loaddatapost");
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -181,10 +184,11 @@ public class loader {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
-                stmt.setInt(1, reply.getPostID());
+                stmt.setInt(1, reply.getId());
                 stmt.setString(2, reply.getAuthor());
-                stmt.setInt(3, reply.getStars());
-                stmt.setString(4, reply.getContent());
+                stmt.setString(3, reply.getContent());
+                stmt.setInt(4, reply.getPostID());
+                stmt.setInt(5, reply.getStars());
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -197,10 +201,11 @@ public class loader {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
-                stmt.setString(1, subreply.getContent());
+                stmt.setInt(1, subreply.getId());
                 stmt.setString(2, subreply.getAuthor());
-                stmt.setInt(3, subreply.getStars());
-                stmt.setInt(4, subreply.getPostID());
+                stmt.setString(3, subreply.getContent());
+                stmt.setInt(4, subreply.getStars());
+                stmt.setInt(5, subreply.getReplyid());
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -226,7 +231,7 @@ public class loader {
                         "    ID                varchar unique primary key,\n" +
                         "    registration_time timestamp,\n" +
                         "    phone             varchar,\n" +
-                        "    name              varchar not null\n" +
+                        "    name              varchar unique not null\n" +
                         ");");
                 con.commit();
                 stmt0.close();
@@ -237,6 +242,7 @@ public class loader {
     }
 
     public static void clearDataInTable_post() {
+        System.out.println("cleardatainpost");
         Statement stmt0;
         if (con != null) {
             try {
@@ -290,7 +296,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table reply cascade;");
+                stmt0.executeUpdate("drop table if exists reply cascade;");
                 con.commit();
                 stmt0.executeUpdate("create table reply\n" +
                         "(\n" +
@@ -302,7 +308,7 @@ public class loader {
                         "     stars已知\n" +
                         "     groupnum是按照postid分组后的编号\n" +
                         "     */\n" +
-                        "    id        serial primary key,\n" +
+                        "    id        int primary key,\n" +
                         "    author    varchar,\n" +
                         "    content   varchar not null,\n" +
                         "    postID    int     not null,\n" +
@@ -310,7 +316,7 @@ public class loader {
                         "--     group_num int,\n" +
                         "    foreign key (author) references author (name),\n" +
                         "    foreign key (postID) references post (ID)\n" +
-                        ");");
+                        ")");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -333,7 +339,7 @@ public class loader {
                         "     authorid content stars已知\n" +
                         "     replyid是指向reply的外键\n" +
                         "     */\n" +
-                        "    id      serial,\n" +
+                        "    id      int,\n" +
                         "    author  varchar,\n" +
                         "    content varchar not null,\n" +
                         "    stars   int,\n" +
@@ -556,6 +562,7 @@ public class loader {
     }
 
     public static void put_posts() {
+        System.out.println("put posts");
         for (int i = 0; i < posts_0.size(); i++) {
             post post = new post();
             Posts posts_1 = posts_0.get(i);
@@ -589,10 +596,24 @@ public class loader {
         }
     }
 
+    //去重
     public static void put_replies() {
+        int id = 0;
         for (int i = 0; i < replies_0.size(); i++) {
             Replies replies_1 = replies_0.get(i);
+            boolean exist = false;
+            for (int j = 0; j < replies.size(); j++) {
+                if (replies_1.getReplyContent().equals(replies.get(j).getContent())) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (exist) {
+                continue;
+            }
             reply reply = new reply();
+            reply.setId(id);
+            id++;
             reply.setContent(replies_1.getReplyContent());
             reply.setAuthor(replies_1.getReplyAuthor());
             reply.setStars(replies_1.getReplyStars());
@@ -601,13 +622,20 @@ public class loader {
         }
     }
 
+    //需要replyid
     public static void put_subreplies() {
         for (int i = 0; i < replies_0.size(); i++) {
             Replies replies1 = replies_0.get(i);
             subreply subreply = new subreply();
+            subreply.setId(i);
             subreply.setAuthor(replies1.getSecondaryReplyAuthor());
             subreply.setContent(replies1.getSecondaryReplyContent());
-            subreply.setPostID(replies1.getPostID());
+            for (int j = 0; j < replies.size(); j++) {
+                if (replies.get(j).getContent().equals(replies_0.get(i).getReplyContent())) {
+                    subreply.setReplyid(j);
+                    break;
+                } else subreply.setReplyid(0);
+            }
             subreply.setStars(replies1.getSecondaryReplyStars());
             subreplies.add(subreply);
         }
@@ -664,7 +692,6 @@ public class loader {
         openDB(prop);
         //这里要都写掉
         setPrepareStatement_author();
-
         try {
             for (author author : authors) {
                 loadData_author(author);//do insert command
@@ -682,9 +709,73 @@ public class loader {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        setPrepareStatement_post();
+
         try {
-            for (post post:posts) {
-//                lo(post);//do insert command
+            for (post post : posts) {
+                loadData_post(post);
+                if (cnt % BATCH_SIZE == 0 && cnt != 0) {
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                }
+                cnt++;
+            }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        setPrepareStatement_category();
+        try {
+            for (category category : categories
+            ) {
+                loadData_category(category);
+                if (cnt % BATCH_SIZE == 0 && cnt != 0) {
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                }
+                cnt++;
+            }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        setPrepareStatement_reply();
+        try {
+            for (reply reply : replies
+            ) {
+                loadData_reply(reply);
+                if (cnt % BATCH_SIZE == 0 && cnt != 0) {
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                }
+                cnt++;
+            }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        setPrepareStatement_subreply();
+        try {
+            for (subreply subreply : subreplies
+            ) {
+                loadData_subreply(subreply);
                 if (cnt % BATCH_SIZE == 0 && cnt != 0) {
                     stmt.executeBatch();
                     stmt.clearBatch();
