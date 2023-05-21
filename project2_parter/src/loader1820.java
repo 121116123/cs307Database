@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-public class loader {
+public class loader1820 {
     public static final int BATCH_SIZE = 1000;
     public static Connection con = null;
     public static PreparedStatement stmt = null;
@@ -291,7 +291,7 @@ public class loader {
     }
 
 
-    public static void loadData_author_favorite_post(author_favorite_post author_favorite_post) {
+    private static void loadData_author_favorite_post(author_favorite_post author_favorite_post) {
 //        String[] lineData = line.split(";");
 //        System.out.println("load favorite");
         if (con != null) {
@@ -305,7 +305,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_like_post(author_like_post author_like_post) {
+    private static void loadData_author_like_post(author_like_post author_like_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -318,7 +318,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_send_post(author_send_post author_send_post) {
+    private static void loadData_author_send_post(author_send_post author_send_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -331,7 +331,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_share_post(author_share_post author_share_post) {
+    private static void loadData_author_share_post(author_share_post author_share_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -344,7 +344,7 @@ public class loader {
         }
     }
 
-    public static void loadData_leader_follower(leader_follower leader_follower) {
+    private static void loadData_leader_follower(leader_follower leader_follower) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -357,7 +357,7 @@ public class loader {
         }
     }
 
-    public static void loadData_post_category(post_category post_category) {
+    private static void loadData_post_category(post_category post_category) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
