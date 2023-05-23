@@ -1,7 +1,14 @@
-
+import javax.print.attribute.standard.Finishings;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
+import java.sql.Timestamp;
+import java.util.Date;;
 
 public class Main {
     public static List<author> authors = loader.authors;
@@ -15,28 +22,29 @@ public class Main {
     public static List<author_share_post> author_share_posts = loader.author_share_posts;
     public static List<leader_follower> leader_followers = loader.leader_followers;
     public static List<post_category> post_categories = loader.post_categories;
+    public static String author_name=null;
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         loader.main(args);
-        String author_name = login_or_setup();
-        System.out.println("au=" + author_name);
         while (true) {
+            String author_name = login_or_setup();
             System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n");
             int what_to_do = input.nextInt();
             if (what_to_do == 1) {
                 author_favorite_share_like_post(author_name);
             } else if (what_to_do == 2) {
                 view_favorite_share_like_list();
-            } else if (what_to_do == 3) {
-                follow_others_or_cancel_follow_and_lookfor_follow_list(author_name);
-            } else if (what_to_do == 4) {
-                send_post(author_name);
-            } else if (what_to_do == 5) {
-                reply_post_or_reply_reply(author_name);
-            } else if (what_to_do == 6) {
-                look_for_posts_or_replies_send(author_name);
+            }else if(what_to_do==3){
+                follow_others_or_cancel_follow_and_lookfor_follow_list();
+            }else if(what_to_do==4){
+                send_post();
+            }else if(what_to_do==5){
+                reply_post_or_reply_reply();
+            }else if(what_to_do==6){
+                look_for_posts_or_replies_send();
             }
+
 
             System.out.println("if you want to exit, please type 0, If you want to continue, please type 1");
             int res = input.nextInt();
@@ -46,11 +54,11 @@ public class Main {
         }
     }
 
-    public static String login_or_setup() {
+    public static String login_or_setup() {//注册或登录账户
         Scanner input = new Scanner(System.in);
         System.out.println("if you already have an account, please type 0, If you want to register a new user, please type 1");
         int type = input.nextInt();
-        String author_name = null;
+        author_name = null;
         if (type == 0) {
             System.out.println("please input your author name: ");
             String s = input.next();
@@ -61,17 +69,17 @@ public class Main {
                     break;
                 }
             }
-            if (author_name == null) {
+            if (author_name==null) {
                 System.out.println("not a valid name");
-                author_name = login_or_setup();
+                login_or_setup();
             }
-        } else {
+        } else if (type == 1) {
             author_name = set_new_author();
-            System.out.println(author_name);
         }
         return author_name;
     }
 
+    //注册账户的方法
     public static String set_new_author() {
         Scanner input = new Scanner(System.in);
         System.out.println("please input your id: ");
@@ -106,7 +114,6 @@ public class Main {
         author.setID(id);
         author.setRegistration_time(reg_time);
         author.setPhone(phone);
-//        System.out.println(name);
         author.setName(name);
         authors.add(author);
 
@@ -124,12 +131,11 @@ public class Main {
         return name;
     }
 
+    //用户点赞、收藏、转发帖子
     public static void author_favorite_share_like_post(String author_name) {
-//        System.out.println(author_name);
         Scanner input = new Scanner(System.in);
         System.out.println("if you know which post you want to do with, please type 1, if you want to choose 1 according to category, please type 0");
         int postid = 0;
-        //get postid
         if (input.nextInt() == 1) {
             System.out.println("Please enter the ID of the post you want to operate");
             postid = input.nextInt();
@@ -218,6 +224,7 @@ public class Main {
         }
     }
 
+    //用户查看的点赞、收藏、转发帖子的列表
     public static void view_favorite_share_like_list() {
         Scanner input = new Scanner(System.in);
         System.out.println("please enter the id of the post you want to do with: ");
@@ -246,10 +253,10 @@ public class Main {
                 }
             }
         }
-
     }
 
-    public static void follow_others_or_cancel_follow_and_lookfor_follow_list(String author_name) {
+    //用户关注其他作者或取消对其他作者的关注，并查看用户自己关注作者的列表
+    public static void follow_others_or_cancel_follow_and_lookfor_follow_list() {
         Scanner input = new Scanner(System.in);
         System.out.println("please enter the author you want to follow or cancel follow");
         String wantToFollow = input.nextLine();
@@ -269,33 +276,12 @@ public class Main {
         if (isFollowing) {
             System.out.println("Do you want to unfollow him/her?please enter 0 for unfollow,enter 1 for keep following");
             int temp = input.nextInt();
-            leader_follower y = new leader_follower();
             if (temp == 0) {//在leader_follower中删除这一条
-                for (int i = 0; i < leader_followers.size(); i++) {
-                    if (leader_followers.get(i).getFollower().equals(user) && leader_followers.get(i).getLeader().equals(wantToFollow)) {
-                        leader_followers.remove(i);
-
+                for (leader_follower leader_follower : leader_followers) {
+                    if (leader_follower.getFollower().equals(user) && leader_follower.getLeader().equals(wantToFollow)) {
+                        leader_followers.remove(leader_follower);
                     }
                 }
-                for (int i = 0; i < thisUserFollow.size(); i++) {
-                    if (thisUserFollow.get(i).equals(wantToFollow)) {
-                        thisUserFollow.remove(i);
-                        y.setFollower(user);
-                        y.setLeader(wantToFollow);
-                    }
-                }
-
-                Properties prop = loader.loadDBUser();
-                loader.openDB(prop);
-                loader.set_delete_PrepareStatement_leader_follower(); // 设置预处理语句
-
-                try {
-                    loader.deleteData_leader_follower(y); // 执行删除操作
-                    loader.con.commit(); // 提交事务
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
             }
         }
         if (!isFollowing) {
@@ -307,70 +293,33 @@ public class Main {
                 a.setLeader(wantToFollow);
                 leader_followers.add(a);
                 thisUserFollow.add(wantToFollow);
-
-                Properties prop = loader.loadDBUser();
-                loader.openDB(prop);
-                loader.setPrepareStatement_leader_follower(); // 设置预处理语句
-
-                try {
-                    loader.loadData_leader_follower(a); // 执行删除操作
-                    loader.con.commit(); // 提交事务
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
-        System.out.print("the authors you follow: ");
-        if (thisUserFollow.size() == 0) {
-            System.out.println("null");
-        }
         for (String a : thisUserFollow) {
-            System.out.print(a + " ");
+            System.out.println(a);
         }
-        System.out.println();
     }
 
-    public static void send_post(String author_name) {
-        Scanner input = new Scanner(System.in);
-        int postid = posts.size();
-        String author = author_name;
+    public static void send_post(){
+        Scanner input=new Scanner(System.in);
+        int postid=posts.size();
+        String author=author_name;
         System.out.println("Please enter the title:");
-        String title = input.nextLine();
+        String title=input.nextLine();
         System.out.println("Please enter the content:");
-        String content = input.nextLine();
-        Date currentDate = new Date();
-        Timestamp time = new Timestamp(currentDate.getTime());
+        String content=input.nextLine();
+        Date currentDate=new Date();
+        Timestamp time=new Timestamp(currentDate.getTime());
         System.out.println("Please enter the city:");
-        String city = input.nextLine();
-
-        post x1 = new post();
-        x1.setContent(content);
-        x1.setID(postid);
-        x1.setPosting_city(city);
-        x1.setPosting_time(time);
-        x1.setTitle(title);
-        posts.add(x1);
-
-        author_send_post x = new author_send_post();
+        String city=input.nextLine();
+        author_send_post x=new author_send_post();
         x.setAuthor(author);
         x.setPostid(postid);
         author_send_posts.add(x);
 
-
         Properties prop = loader.loadDBUser();
-
         loader.openDB(prop);
-        loader.setPrepareStatement_post();
-        try {
-            loader.loadData_post(x1);//do insert command
-            loader.stmt.executeBatch();
-            loader.con.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        loader.openDB(prop);
-        loader.setPrepareStatement_author_send_post();
+        loader.setPrepareStatement_author();
         try {
             loader.loadData_author_send_post(x);//do insert command
             loader.stmt.executeBatch();
@@ -378,24 +327,22 @@ public class Main {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-    public static void reply_post_or_reply_reply(String author_name) {
+    public static void reply_post_or_reply_reply() {
         Scanner input = new Scanner(System.in);
         System.out.println("Do you want to reply post or reply reply? Please enter 0 for post or 1 for reply");
-        int temp = input.nextInt();
-        if (temp == 0) {
+        int temp= input.nextInt();
+        if (temp==0){
             System.out.println("Please enter the postid of the post you want to reply");
-            int postid = input.nextInt();
-            String author = author_name;
+            int postid= input.nextInt();
+            System.out.println("Please enter your name:");
+            String author= input.nextLine();
             System.out.println("Please enter the reply content:");
-            input.nextLine();
-            String content = input.nextLine();
-            int stars = 0;
-            int id = replies.size();
-            reply x = new reply();
+            String content= input.nextLine();
+            int stars=0;
+            int id=replies.size();
+            reply x=new reply();
             x.setAuthor(author);
             x.setPostID(postid);
             x.setContent(content);
@@ -405,7 +352,7 @@ public class Main {
 
             Properties prop = loader.loadDBUser();
             loader.openDB(prop);
-            loader.setPrepareStatement_reply();
+            loader.setPrepareStatement_author();
             try {
                 loader.loadData_reply(x);//do insert command
                 loader.stmt.executeBatch();
@@ -414,16 +361,18 @@ public class Main {
                 throw new RuntimeException(e);
             }
 
-        } else {
+        }
+        else{
             System.out.println("Please enter the replyid of the reply you want to reply");
-            int subreplyid = input.nextInt();
+            int subreplyid= input.nextInt();
+            System.out.println("Please enter your name:");
+            String author= input.nextLine();
             System.out.println("Please enter the reply content:");
-            input.nextLine();
-            String content = input.nextLine();
-            int stars = 0;
-            int id = replies.size();
-            subreply x = new subreply();
-            x.setAuthor(author_name);
+            String content= input.nextLine();
+            int stars=0;
+            int id=replies.size();
+            subreply x=new subreply();
+            x.setAuthor(author);
             x.setReplyid(subreplyid);
             x.setContent(content);
             x.setStars(stars);
@@ -432,7 +381,7 @@ public class Main {
 
             Properties prop = loader.loadDBUser();
             loader.openDB(prop);
-            loader.setPrepareStatement_subreply();
+            loader.setPrepareStatement_author();
             try {
                 loader.loadData_subreply(x);//do insert command
                 loader.stmt.executeBatch();
@@ -441,60 +390,39 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
+
+
     }
 
-    public static void look_for_posts_or_replies_send(String author_name) {
-        String author = author_name;
-        Scanner input = new Scanner(System.in);
-        System.out.println("");
-        ArrayList<post> postsend = new ArrayList<>();
-        for (author_send_post author_send_post : author_send_posts) {
-            if (author_send_post.getAuthor().equals(author)) {
-                for (int i = 0; i < posts.size(); i++) {
-                    if (posts.get(i).getID() == author_send_post.getPostid()) {
-                        postsend.add(posts.get(i));
-                    }
-                }
+    public static void look_for_posts_or_replies_send(){
+        String author=author_name;
+        Scanner input=new Scanner(System.in);
+        ArrayList<Integer> postsend =new ArrayList<>();
+        for(author_send_post author_send_post:author_send_posts){
+            if (author_send_post.getAuthor().equals(author)){
+                postsend.add(author_send_post.getPostid());
             }
         }
-        ArrayList<reply> replysend = new ArrayList<>();
-        for (reply reply : replies) {
-            if (reply.getAuthor().equals(author)) {
-                replysend.add(reply);
+        ArrayList<Integer> replysend =new ArrayList<>();
+        for(reply reply:replies){
+            if (reply.getAuthor().equals(author)){
+                replysend.add(reply.getId());
             }
         }
-        ArrayList<subreply> subreplysend = new ArrayList<>();
-        for (subreply subreply : subreplies) {
-            if (subreply.getAuthor().equals(author)) {
-                subreplysend.add(subreply);
+        ArrayList<Integer> subreplysend =new ArrayList<>();
+        for(subreply subreply:subreplies){
+            if(subreply.getAuthor().equals(author)){
+                subreplysend.add(subreply.getId());
             }
         }
-        System.out.print("postsend:");
-        if (postsend.size() == 0) {
-            System.out.println("null");
+        for(int postid:postsend){
+            System.out.println(postid);
         }
-        for (post post : postsend) {
-            System.out.println("postid: " + post.getID());
-            System.out.println("title: " + post.getTitle());
-            System.out.println("content: " + post.getContent());
+        for(int replyid:replysend){
+            System.out.println(replyid);
         }
-        System.out.println();
-        System.out.print("replysend:");
-        if (replysend.size() == 0) {
-            System.out.println("null");
-        }
-        for (reply reply : replysend) {
-            System.out.println("replyid: " + reply.getId());
-            System.out.println("content " + reply.getContent());
-        }
-        System.out.println();
-        System.out.print("subreplysend:");
-        if (subreplysend.size() == 0) {
-            System.out.println("null");
-        }
-        for (subreply subreply : subreplysend) {
-            System.out.println("id: " + subreply.getId());
-            System.out.println("content: " + subreply.getContent());
+        for(int subreplyid:subreplysend){
+            System.out.println(subreplyid);
         }
     }
 

@@ -37,13 +37,13 @@ public class loader {
             System.err.println("Cannot find the Postgres driver. Check CLASSPATH.");
             System.exit(1);
         }
-        String url = "jdbc:postgresql://localhost:5432/proj_1";
+        String url = "jdbc:postgresql://localhost:5432/project2";
 
         try {
             con = DriverManager.getConnection(url, prop);
             if (con != null) {
-//                System.out.println("Successfully connected to the database "
-//                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
+                System.out.println("Successfully connected to the database "
+                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
                 con.setAutoCommit(false);
             }
         } catch (SQLException e) {
@@ -187,18 +187,6 @@ public class loader {
         }
     }
 
-    public static void set_delete_PrepareStatement_leader_follower() {
-        try {
-            stmt = con.prepareStatement("DELETE FROM leader_follower WHERE leader = ? AND follower = ?");
-        } catch (SQLException e) {
-            System.err.println("Prepare statement failed");
-            System.err.println(e.getMessage());
-            closeDB();
-            System.exit(1);
-        }
-    }
-
-
 
     public static void closeDB() {
         if (con != null) {
@@ -216,8 +204,8 @@ public class loader {
     public static Properties loadDBUser() {
         Properties properties = new Properties();
         try {
-            properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\project2_parter\\dbUser.properties")));
-//            System.out.println(properties);
+            properties.load(new InputStreamReader(new FileInputStream("F:\\untitled10\\dbUser.properties")));
+            System.out.println(properties);
             return properties;
         } catch (IOException e) {
             System.err.println("can not find db user file");
@@ -378,18 +366,6 @@ public class loader {
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    public static void deleteData_leader_follower(leader_follower leader_follower) throws SQLException {
-        if (con != null) {
-            try {
-                stmt.setString(1, leader_follower.getLeader());
-                stmt.setString(2, leader_follower.getFollower());
-                stmt.executeUpdate(); // 执行删除操作
-            } catch (SQLException ex) {
-                throw ex;
             }
         }
     }
@@ -1036,7 +1012,7 @@ public class loader {
     public static void main(String[] args) {
         Properties prop = loadDBUser();
 //读两个json文件，建好了两个list
-        String fileName_posts = "D:\\AAAA\\study\\cs307数据库\\project2_parter\\posts.json";
+        String fileName_posts = "F:\\untitled10\\posts.json";
         try (JsonReader reader = new JsonReader(new FileReader(fileName_posts))) {
             Gson gson = new Gson();
             reader.beginArray(); // 读取JSON数组的开头
@@ -1049,7 +1025,7 @@ public class loader {
             e.printStackTrace();
         }
 
-        String fileName_replies = "D:\\AAAA\\study\\cs307数据库\\project2_parter\\replies.json";
+        String fileName_replies = "F:\\untitled10\\replies.json";
         try (JsonReader reader = new JsonReader(new FileReader(fileName_replies))) {
             Gson gson = new Gson();
             reader.beginArray(); // 读取JSON数组的开头

@@ -42,8 +42,8 @@ public class loader {
         try {
             con = DriverManager.getConnection(url, prop);
             if (con != null) {
-//                System.out.println("Successfully connected to the database "
-//                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
+                System.out.println("Successfully connected to the database "
+                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
                 con.setAutoCommit(false);
             }
         } catch (SQLException e) {
@@ -187,16 +187,6 @@ public class loader {
         }
     }
 
-    public static void set_delete_PrepareStatement_leader_follower() {
-        try {
-            stmt = con.prepareStatement("DELETE FROM leader_follower WHERE leader = ? AND follower = ?");
-        } catch (SQLException e) {
-            System.err.println("Prepare statement failed");
-            System.err.println(e.getMessage());
-            closeDB();
-            System.exit(1);
-        }
-    }
 
 
 
@@ -216,8 +206,8 @@ public class loader {
     public static Properties loadDBUser() {
         Properties properties = new Properties();
         try {
-            properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\project2_parter\\dbUser.properties")));
-//            System.out.println(properties);
+            properties.load(new InputStreamReader(new FileInputStream("D:\\AAAA\\study\\cs307数据库\\proj_1\\resources\\dbUser.properties")));
+            System.out.println(properties);
             return properties;
         } catch (IOException e) {
             System.err.println("can not find db user file");
@@ -303,9 +293,8 @@ public class loader {
     }
 
 
-    public static void loadData_author_favorite_post(author_favorite_post author_favorite_post) {
+    private static void loadData_author_favorite_post(author_favorite_post author_favorite_post) {
 //        String[] lineData = line.split(";");
-//        System.out.println("load favorite");
         if (con != null) {
             try {
                 stmt.setString(1, author_favorite_post.getAuthor());
@@ -317,7 +306,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_like_post(author_like_post author_like_post) {
+    private static void loadData_author_like_post(author_like_post author_like_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -330,7 +319,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_send_post(author_send_post author_send_post) {
+    private static void loadData_author_send_post(author_send_post author_send_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -343,7 +332,7 @@ public class loader {
         }
     }
 
-    public static void loadData_author_share_post(author_share_post author_share_post) {
+    private static void loadData_author_share_post(author_share_post author_share_post) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -356,7 +345,7 @@ public class loader {
         }
     }
 
-    public static void loadData_leader_follower(leader_follower leader_follower) {
+    private static void loadData_leader_follower(leader_follower leader_follower) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -369,7 +358,7 @@ public class loader {
         }
     }
 
-    public static void loadData_post_category(post_category post_category) {
+    private static void loadData_post_category(post_category post_category) {
 //        String[] lineData = line.split(";");
         if (con != null) {
             try {
@@ -382,17 +371,7 @@ public class loader {
         }
     }
 
-    public static void deleteData_leader_follower(leader_follower leader_follower) throws SQLException {
-        if (con != null) {
-            try {
-                stmt.setString(1, leader_follower.getLeader());
-                stmt.setString(2, leader_follower.getFollower());
-                stmt.executeUpdate(); // 执行删除操作
-            } catch (SQLException ex) {
-                throw ex;
-            }
-        }
-    }
+
 
 
     public static void clearDataInTable_author() {
@@ -400,7 +379,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists author cascade ;");
+                stmt0.executeUpdate("drop table author cascade ;");
                 con.commit();
                 stmt0.executeUpdate("create table author\n" +
                         "(\n" +
@@ -428,7 +407,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists post cascade ;");
+                stmt0.executeUpdate("drop table post cascade ;");
                 con.commit();
                 stmt0.executeUpdate("create table post\n" +
                         "(\n" +
@@ -458,7 +437,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists category cascade ;");
+                stmt0.executeUpdate("drop table category cascade ;");
                 con.commit();
                 stmt0.executeUpdate("create table category(\n" +
                         "    content varchar primary key\n" +
@@ -511,7 +490,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists subreply cascade;");
+                stmt0.executeUpdate("drop table subreply cascade;");
                 con.commit();
                 stmt0.executeUpdate("create table subreply\n" +
                         "(\n" +
@@ -542,16 +521,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists author_favorite_post cascade ;");
+                stmt0.executeUpdate("drop table author_favorite_post cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table author_favorite_post\n" +
-                        "(\n" +
+                stmt0.executeUpdate("create table author_favorite_post{\n" +
                         "    postid int,\n" +
                         "    author varchar,\n" +
-                        "    primary key (postid, author),\n" +
-                        "    foreign key (postid) references post (ID),\n" +
-                        "    foreign key (author) references author (name)\n" +
-                        ");");
+                        "    }");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -565,16 +540,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists author_like_post cascade ;");
+                stmt0.executeUpdate("drop table author_like_post cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table author_like_post\n" +
-                        "(\n" +
+                stmt0.executeUpdate("create table author_like_post{\n" +
                         "    postid int,\n" +
                         "    author varchar,\n" +
-                        "    primary key (postid, author),\n" +
-                        "    foreign key (postid) references post (ID),\n" +
-                        "    foreign key (author) references author (name)\n" +
-                        ");");
+                        "    }");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -588,16 +559,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists author_send_post cascade ;");
+                stmt0.executeUpdate("drop table author_send_post cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table author_send_post\n" +
-                        "(\n" +
-                        "    author varchar,\n" +
+                stmt0.executeUpdate("create table author_send_post{\n" +
                         "    postid int,\n" +
-                        "    primary key (author, postid),\n" +
-                        "    foreign key (author) references author (name),\n" +
-                        "    foreign key (postid) references post (ID)\n" +
-                        ");");
+                        "    author varchar,\n" +
+                        "    }");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -611,16 +578,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists author_share_post cascade ;");
+                stmt0.executeUpdate("drop table author_share_post cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table author_share_post\n" +
-                        "(\n" +
+                stmt0.executeUpdate("create table author_share_post{\n" +
                         "    postid int,\n" +
                         "    author varchar,\n" +
-                        "    primary key (postid, author),\n" +
-                        "    foreign key (postid) references post (ID),\n" +
-                        "    foreign key (author) references author (name)\n" +
-                        ");");
+                        "    }");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -634,16 +597,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists leader_follower cascade ;");
+                stmt0.executeUpdate("drop table leader_follower cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table leader_follower\n" +
-                        "(\n" +
-                        "    leader   varchar,\n" +
+                stmt0.executeUpdate("create table leader_follower{\n" +
+                        "    leader varchar,\n" +
                         "    follower varchar,\n" +
-                        "    primary key (leader, follower),\n" +
-                        "    foreign key (leader) references author (name),\n" +
-                        "    foreign key (follower) references author (name)\n" +
-                        ");");
+                        "    }");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -657,12 +616,12 @@ public class loader {
         if (con != null) {
             try {
                 stmt0 = con.createStatement();
-                stmt0.executeUpdate("drop table if exists post_category cascade ;");
+                stmt0.executeUpdate("drop table post_category cascade ;");
                 con.commit();
-                stmt0.executeUpdate("create table post_category(\n" +
+                stmt0.executeUpdate("create table post_category{\n" +
                         "    postid int,\n" +
-                        "    category varchar\n" +
-                        ");");
+                        "    category varchar,\n" +
+                        "    }\n");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -959,33 +918,29 @@ public class loader {
 
 
     public static void put_author_favorite_post() {
-        for (int i = 0; i < posts_0.size(); i++) {
-            for (int j = 0; j < posts_0.get(i).getAuthorFavorite().size(); j++) {
-                author_favorite_post author_favorite_post = new author_favorite_post();
-                Posts post_1 = posts_0.get(i);
-                String author = posts_0.get(i).getAuthorFavorite().get(j);
-                author_favorite_post.setPostid(post_1.getPostID());
-                author_favorite_post.setAuthor(author);
-                author_favorite_posts.add(author_favorite_post);
-            }
+        for (int i = 0; i < author_favorite_posts.size(); i++) {
+            author_favorite_post author_favorite_post = new author_favorite_post();
+            Posts post_1 = posts_0.get(i);
+            String author = posts_0.get(i).getAuthor();
+            author_favorite_post.setPostid(post_1.getPostID());
+            author_favorite_post.setAuthor(author);
+            author_favorite_posts.add(author_favorite_post);
         }
     }
 
     public static void put_author_like_post() {
-        for (int i = 0; i < posts_0.size(); i++) {
-            for (int j = 0; j < posts_0.get(i).getAuthorLiked().size(); j++) {
-                author_like_post author_like_post = new author_like_post();
-                Posts post_1 = posts_0.get(i);
-                String author = posts_0.get(i).getAuthorLiked().get(j);
-                author_like_post.setPostid(post_1.getPostID());
-                author_like_post.setAuthor(author);
-                author_like_posts.add(author_like_post);
-            }
+        for (int i = 0; i < author_like_posts.size(); i++) {
+            author_like_post author_like_post = new author_like_post();
+            Posts post_1 = posts_0.get(i);
+            String author = posts_0.get(i).getAuthor();
+            author_like_post.setPostid(post_1.getPostID());
+            author_like_post.setAuthor(author);
+            author_like_posts.add(author_like_post);
         }
     }
 
     public static void put_author_send_post() {
-        for (int i = 0; i < posts_0.size(); i++) {
+        for (int i = 0; i < author_send_posts.size(); i++) {
             author_send_post author_send_post = new author_send_post();
             Posts post_1 = posts_0.get(i);
             String author = posts_0.get(i).getAuthor();
@@ -996,47 +951,47 @@ public class loader {
     }
 
     public static void put_author_share_post() {
-        for (int i = 0; i < posts_0.size(); i++) {
-            for (int j = 0; j < posts_0.get(i).getAuthorShared().size(); j++) {
-                author_share_post author_share_post = new author_share_post();
-                Posts post_1 = posts_0.get(i);
-                String author = posts_0.get(i).getAuthorShared().get(j);
-                author_share_post.setPostid(post_1.getPostID());
-                author_share_post.setAuthor(author);
-                author_share_posts.add(author_share_post);
-            }
+        for (int i = 0; i < author_share_posts.size(); i++) {
+            author_favorite_post author_share_post = new author_favorite_post();
+            Posts post_1 = posts_0.get(i);
+            String author = posts_0.get(i).getAuthor();
+            author_share_post.setPostid(post_1.getPostID());
+            author_share_post.setAuthor(author);
+            author_favorite_posts.add(author_share_post);
         }
     }
 
     public static void put_leader_follower() {
-        for (int i = 0; i < posts_0.size(); i++) {
-            for (int j = 0; j < posts_0.get(i).getAuthorFollowedBy().size(); j++) {
-                leader_follower leader_follower = new leader_follower();
-                Posts posts_1 = posts_0.get(i);
-                leader_follower.setLeader(posts_1.getAuthor());
+        for (int i = 0; i < leader_followers.size(); i++) {
+            leader_follower leader_follower = new leader_follower();
+            post post = new post();
+            Posts posts_1 = posts_0.get(i);
+            leader_follower.setLeader(posts_1.getAuthor());
+            leader_follower.setLeader(posts_1.getAuthor());
+            for (int j = 0; j < posts_1.getAuthorFollowedBy().size(); j++) {
                 leader_follower.setFollower(posts_1.getAuthorFollowedBy().get(j));
-                leader_followers.add(leader_follower);
             }
         }
     }
 
     public static void put_post_category() {
-        for (int i = 0; i < posts_0.size(); i++) {
-            for (int j = 0; j < posts_0.get(i).getCategory().size(); j++) {
-                post_category post_category = new post_category();
-                Posts posts_1 = posts_0.get(i);
-                post_category.setPostid(posts_1.getPostID());
+        for (int i = 0; i < post_categories.size(); i++) {
+            post_category post_category = new post_category();
+            post post = new post();
+            Posts posts_1 = posts_0.get(i);
+            post_category.setPostid(posts_1.getPostID());
+            for (int j = 0; j < posts_1.getCategory().size(); j++) {
                 post_category.setCategory(posts_1.getCategory().get(j));
-                post_categories.add(post_category);
             }
         }
     }
 
 
+
     public static void main(String[] args) {
         Properties prop = loadDBUser();
 //读两个json文件，建好了两个list
-        String fileName_posts = "D:\\AAAA\\study\\cs307数据库\\project2_parter\\posts.json";
+        String fileName_posts = "D:\\AAAA\\study\\cs307数据库\\project2\\resources\\posts.json";
         try (JsonReader reader = new JsonReader(new FileReader(fileName_posts))) {
             Gson gson = new Gson();
             reader.beginArray(); // 读取JSON数组的开头
@@ -1049,7 +1004,7 @@ public class loader {
             e.printStackTrace();
         }
 
-        String fileName_replies = "D:\\AAAA\\study\\cs307数据库\\project2_parter\\replies.json";
+        String fileName_replies = "D:\\AAAA\\study\\cs307数据库\\project2\\resources\\replies.json";
         try (JsonReader reader = new JsonReader(new FileReader(fileName_replies))) {
             Gson gson = new Gson();
             reader.beginArray(); // 读取JSON数组的开头
@@ -1070,7 +1025,6 @@ public class loader {
         put_replies();
         put_subreplies();
         put_author_favorite_post();
-
         put_author_like_post();
         put_author_send_post();
         put_author_share_post();
@@ -1092,6 +1046,7 @@ public class loader {
         clearDataInTable_leader_follower();
         clearDataIntable_post_category();
         closeDB();
+
 
 
         int cnt = 0;
@@ -1200,7 +1155,6 @@ public class loader {
 
         setPrepareStatement_author_favorite_post();
         try {
-
             for (author_favorite_post author_favorite_post : author_favorite_posts) {
                 loadData_author_favorite_post(author_favorite_post);
                 if (cnt % BATCH_SIZE == 0 && cnt != 0) {
