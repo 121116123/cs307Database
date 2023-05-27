@@ -15,6 +15,8 @@ public class Main {
     public static List<author_share_post> author_share_posts = loader.author_share_posts;
     public static List<leader_follower> leader_followers = loader.leader_followers;
     public static List<post_category> post_categories = loader.post_categories;
+    public static List<author_send_reply> author_send_replies = loader.author_send_replies;
+    public static List<author_send_subreply> author_send_subreplies = loader.author_send_subreplies;
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -48,7 +50,7 @@ public class Main {
     }
 
 
-    public static void load(String[]args){
+    public static void load(String[] args) {
         loader.main(args);
     }
 
@@ -338,9 +340,17 @@ public class Main {
 
     public static void send_post(String author_name) {
         Scanner input = new Scanner(System.in);
-        int postid = posts.size();
+        System.out.println("If you want anonymous speech, enter 1, real name, enter 0");
         String author = author_name;
+        boolean is_anonymous = false;
+        if (input.nextInt() == 1) {
+            is_anonymous = true;
+            author = "unknown";
+        } else author = author_name;
+        int postid = posts.size();
+
         System.out.println("Please enter the title:");
+        input.nextLine();
         String title = input.nextLine();
         System.out.println("Please enter the content:");
         String content = input.nextLine();
@@ -355,11 +365,15 @@ public class Main {
         x1.setPosting_city(city);
         x1.setPosting_time(time);
         x1.setTitle(title);
+        x1.setAuthor(author);
         posts.add(x1);
 
         author_send_post x = new author_send_post();
-        x.setAuthor(author);
+        x.setAuthor(author_name);
         x.setPostid(postid);
+        if (is_anonymous) {
+            x.setIs_anonymous(1);
+        } else x.setIs_anonymous(0);
         author_send_posts.add(x);
 
 
@@ -390,12 +404,19 @@ public class Main {
 
     public static void reply_post_or_reply_reply(String author_name) {
         Scanner input = new Scanner(System.in);
+        System.out.println("If you want anonymous speech, enter 1, real name, enter 0");
+        String author = author_name;
+        boolean is_anonymous = false;
+        if (input.nextInt() == 1) {
+            author = "unknown";
+            is_anonymous = true;
+        } else author = author_name;
+
         System.out.println("Do you want to reply post or reply reply? Please enter 0 for post or 1 for reply");
         int temp = input.nextInt();
         if (temp == 0) {
             System.out.println("Please enter the postid of the post you want to reply");
             int postid = input.nextInt();
-            String author = author_name;
             System.out.println("Please enter the reply content:");
             input.nextLine();
             String content = input.nextLine();
@@ -409,6 +430,14 @@ public class Main {
             x.setId(id);
             replies.add(x);
 
+            author_send_reply author_send_reply = new author_send_reply();
+            author_send_reply.setAuthor(author_name);
+            author_send_reply.setReplyid(id);
+            if (is_anonymous) {
+                author_send_reply.setIs_anonymous(1);
+            } else author_send_reply.setIs_anonymous(0);
+            author_send_replies.add(author_send_reply);
+
             Properties prop = loader.loadDBUser();
             loader.openDB(prop);
             loader.setPrepareStatement_reply();
@@ -420,6 +449,18 @@ public class Main {
                 throw new RuntimeException(e);
             }
 
+            loader.openDB(prop);
+            loader.setPrepareStatement_author_send_reply();
+            try {
+                loader.loadData_author_send_reply(author_send_reply);//do insert command
+                loader.stmt.executeBatch();
+                loader.con.commit();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
         } else {
             System.out.println("Please enter the replyid of the reply you want to reply");
             int subreplyid = input.nextInt();
@@ -427,14 +468,22 @@ public class Main {
             input.nextLine();
             String content = input.nextLine();
             int stars = 0;
-            int id = replies.size();
+            int id = subreplies.size();
             subreply x = new subreply();
-            x.setAuthor(author_name);
+            x.setAuthor(author);
             x.setReplyid(subreplyid);
             x.setContent(content);
             x.setStars(stars);
             x.setId(id);
             subreplies.add(x);
+
+            author_send_subreply author_send_subreply = new author_send_subreply();
+            author_send_subreply.setAuthor(author_name);
+            author_send_subreply.setSubreplyid(id);
+            if (is_anonymous) {
+                author_send_subreply.setIs_anonymous(1);
+            } else author_send_subreply.setIs_anonymous(0);
+            author_send_subreplies.add(author_send_subreply);
 
             Properties prop = loader.loadDBUser();
             loader.openDB(prop);
@@ -446,16 +495,27 @@ public class Main {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
+
+            loader.openDB(prop);
+            loader.setPrepareStatement_author_send_subreply();
+            try {
+                loader.loadData_author_send_subreply(author_send_subreply);//do insert command
+                loader.stmt.executeBatch();
+                loader.con.commit();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public static void look_for_posts_or_replies_send(String author_name) {
-        String author = author_name;
+//        String author = author_name;
         Scanner input = new Scanner(System.in);
         System.out.println("");
         ArrayList<post> postsend = new ArrayList<>();
         for (author_send_post author_send_post : author_send_posts) {
-            if (author_send_post.getAuthor().equals(author)) {
+            if (author_send_post.getAuthor().equals(author_name)) {
                 for (int i = 0; i < posts.size(); i++) {
                     if (posts.get(i).getID() == author_send_post.getPostid()) {
                         postsend.add(posts.get(i));
@@ -464,17 +524,29 @@ public class Main {
             }
         }
         ArrayList<reply> replysend = new ArrayList<>();
-        for (reply reply : replies) {
-            if (reply.getAuthor().equals(author)) {
-                replysend.add(reply);
+        for (author_send_reply author_send_reply : author_send_replies
+        ) {
+            if (author_send_reply.getAuthor().equals(author_name)) {
+                for (int i = 0; i < replies.size(); i++) {
+                    if (replies.get(i).getId() == author_send_reply.getReplyid()) {
+                        replysend.add(replies.get(i));
+                    }
+                }
             }
         }
+
         ArrayList<subreply> subreplysend = new ArrayList<>();
-        for (subreply subreply : subreplies) {
-            if (subreply.getAuthor().equals(author)) {
-                subreplysend.add(subreply);
+        for (author_send_subreply author_send_subreply : author_send_subreplies
+        ) {
+            if (author_send_subreply.getAuthor().equals(author_name)) {
+                for (int i = 0; i < subreplies.size(); i++) {
+                    if (subreplies.get(i).getId() == author_send_subreply.getSubreplyid()) {
+                        subreplysend.add(subreplies.get(i));
+                    }
+                }
             }
         }
+
         System.out.print("postsend:");
         if (postsend.size() == 0) {
             System.out.println("null");
@@ -483,8 +555,17 @@ public class Main {
             System.out.println("postid: " + post.getID());
             System.out.println("title: " + post.getTitle());
             System.out.println("content: " + post.getContent());
+            for (int i = 0; i < author_send_posts.size(); i++) {
+                if (author_send_posts.get(i).getPostid() == post.getID()) {
+                    if (author_send_posts.get(i).getIs_anonymous() == 1) {
+                        System.out.println("post in anonymous");
+                    } else System.out.println("post in real name");
+                }
+            }
         }
         System.out.println();
+
+
         System.out.print("replysend:");
         if (replysend.size() == 0) {
             System.out.println("null");
@@ -492,8 +573,16 @@ public class Main {
         for (reply reply : replysend) {
             System.out.println("replyid: " + reply.getId());
             System.out.println("content " + reply.getContent());
+            for (int i = 0; i < author_send_replies.size(); i++) {
+                if (author_send_replies.get(i).getReplyid() == reply.getId()) {
+                    if (author_send_replies.get(i).getIs_anonymous() == 1) {
+                        System.out.println("post in anonymous");
+                    } else System.out.println("post in real name");
+                }
+            }
         }
         System.out.println();
+
         System.out.print("subreplysend:");
         if (subreplysend.size() == 0) {
             System.out.println("null");
@@ -501,6 +590,13 @@ public class Main {
         for (subreply subreply : subreplysend) {
             System.out.println("id: " + subreply.getId());
             System.out.println("content: " + subreply.getContent());
+            for (int i = 0; i < author_send_subreplies.size(); i++) {
+                if (author_send_subreplies.get(i).getSubreplyid() == subreply.getId()) {
+                    if (author_send_subreplies.get(i).getIs_anonymous() == 1) {
+                        System.out.println("post in anonymous");
+                    } else System.out.println("post in real name");
+                }
+            }
         }
     }
 

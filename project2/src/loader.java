@@ -30,6 +30,10 @@ public class loader {
     public static List<leader_follower> leader_followers = new ArrayList<>();
     public static List<post_category> post_categories = new ArrayList<>();
 
+    public static List<author_send_reply> author_send_replies = new ArrayList<>();
+    public static List<author_send_subreply> author_send_subreplies = new ArrayList<>();
+
+
     public static void openDB(Properties prop) {
         try {
             Class.forName("org.postgresql.Driver");
@@ -141,8 +145,8 @@ public class loader {
 
     public static void setPrepareStatement_author_send_post() {
         try {
-            stmt = con.prepareStatement("insert into author_send_post(author,postid)  " +
-                    "VALUES (?,?);");
+            stmt = con.prepareStatement("insert into author_send_post(author,postid,is_anonymous)  " +
+                    "VALUES (?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -187,6 +191,30 @@ public class loader {
         }
     }
 
+    public static void setPrepareStatement_author_send_reply() {
+        try {
+            stmt = con.prepareStatement("insert into author_send_reply(author, replyid,is_anonymous) " +
+                    "VALUES (?,?,?);");
+        } catch (SQLException e) {
+            System.err.println("Insert statement failed");
+            System.err.println(e.getMessage());
+            closeDB();
+            System.exit(1);
+        }
+    }
+
+    public static void setPrepareStatement_author_send_subreply() {
+        try {
+            stmt = con.prepareStatement("insert into author_send_subreply(author, subreplyid,is_anonymous) " +
+                    "VALUES (?,?,?);");
+        } catch (SQLException e) {
+            System.err.println("Insert statement failed");
+            System.err.println(e.getMessage());
+            closeDB();
+            System.exit(1);
+        }
+    }
+
     public static void set_delete_PrepareStatement_leader_follower() {
         try {
             stmt = con.prepareStatement("DELETE FROM leader_follower WHERE leader = ? AND follower = ?");
@@ -197,7 +225,6 @@ public class loader {
             System.exit(1);
         }
     }
-
 
 
     public static void closeDB() {
@@ -246,7 +273,7 @@ public class loader {
         if (con != null) {
             try {
                 stmt.setInt(1, post.getID());
-                stmt.setString(2,post.getAuthor());
+                stmt.setString(2, post.getAuthor());
                 stmt.setString(3, post.getTitle());
                 stmt.setString(4, post.getContent());
                 stmt.setTimestamp(5, post.getPosting_time());
@@ -337,6 +364,8 @@ public class loader {
             try {
                 stmt.setString(1, author_send_post.getAuthor());
                 stmt.setInt(2, author_send_post.getPostid());
+                stmt.setInt(3, author_send_post.getIs_anonymous());
+
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -395,6 +424,35 @@ public class loader {
         }
     }
 
+    public static void loadData_author_send_reply(author_send_reply author_send_reply) {
+//        String[] lineData = line.split(";");
+        if (con != null) {
+            try {
+                stmt.setString(1, author_send_reply.getAuthor());
+                stmt.setInt(2, author_send_reply.getReplyid());
+                stmt.setInt(3, author_send_reply.getIs_anonymous());
+
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public static void loadData_author_send_subreply(author_send_subreply author_send_subreply) {
+//        String[] lineData = line.split(";");
+        if (con != null) {
+            try {
+                stmt.setString(1, author_send_subreply.getAuthor());
+                stmt.setInt(2, author_send_subreply.getSubreplyid());
+                stmt.setInt(3, author_send_subreply.getIs_anonymous());
+
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
 
     public static void clearDataInTable_author() {
         Statement stmt0;
@@ -491,15 +549,15 @@ public class loader {
                         "     stars已知\n" +
                         "     groupnum是按照postid分组后的编号\n" +
                         "     */\n" +
-                        "    id        int primary key,\n" +
-                        "    author    varchar,\n" +
-                        "    content   varchar not null,\n" +
-                        "    postID    int     not null,\n" +
-                        "    stars     int,\n" +
+                        "    id      int primary key,\n" +
+                        "    author  varchar,\n" +
+                        "    content varchar not null,\n" +
+                        "    postID  int     not null,\n" +
+                        "    stars   int,\n" +
                         "--     group_num int,\n" +
-                        "    foreign key (author) references author (name),\n" +
+                        "--     foreign key (author) references author (name),\n" +
                         "    foreign key (postID) references post (ID)\n" +
-                        ")");
+                        ");");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -522,14 +580,13 @@ public class loader {
                         "     authorid content stars已知\n" +
                         "     replyid是指向reply的外键\n" +
                         "     */\n" +
-                        "    id      int,\n" +
+                        "    id      int primary key,\n" +
                         "    author  varchar,\n" +
                         "    content varchar not null,\n" +
                         "    stars   int,\n" +
                         "    replyid int     not null,\n" +
-                        "    primary key (id, replyid),\n" +
-                        "    foreign key (replyid) references reply (id),\n" +
-                        "    foreign key (author) references author(name)\n" +
+                        "    foreign key (replyid) references reply (id) \n" +
+                        "   -- foreign key (author) references author (name)\n" +
                         ");");
                 con.commit();
                 stmt0.close();
@@ -594,8 +651,9 @@ public class loader {
                 con.commit();
                 stmt0.executeUpdate("create table author_send_post\n" +
                         "(\n" +
-                        "    author varchar,\n" +
-                        "    postid int,\n" +
+                        "    author       varchar,\n" +
+                        "    postid       int,\n" +
+                        "    is_anonymous int,\n" +
                         "    primary key (author, postid),\n" +
                         "    foreign key (author) references author (name),\n" +
                         "    foreign key (postid) references post (ID)\n" +
@@ -664,6 +722,54 @@ public class loader {
                 stmt0.executeUpdate("create table post_category(\n" +
                         "    postid int,\n" +
                         "    category varchar\n" +
+                        ");");
+                con.commit();
+                stmt0.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public static void clearDataInTable_author_send_reply() {
+        Statement stmt0;
+        if (con != null) {
+            try {
+                stmt0 = con.createStatement();
+                stmt0.executeUpdate("drop table if exists author_send_reply cascade ;");
+                con.commit();
+                stmt0.executeUpdate("create table author_send_reply\n" +
+                        "(\n" +
+                        "    author       varchar,\n" +
+                        "    replyid      int,\n" +
+                        "    is_anonymous int,\n" +
+                        "    primary key (author, replyid),\n" +
+                        "    foreign key (author) references author (name),\n" +
+                        "    foreign key (replyid) references reply (id)\n" +
+                        ");");
+                con.commit();
+                stmt0.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public static void clearDataInTable_author_send_subreply() {
+        Statement stmt0;
+        if (con != null) {
+            try {
+                stmt0 = con.createStatement();
+                stmt0.executeUpdate("drop table if exists author_send_subreply cascade ;");
+                con.commit();
+                stmt0.executeUpdate("create table author_send_subreply\n" +
+                        "(\n" +
+                        "    author       varchar,\n" +
+                        "    subreplyid   int,\n" +
+                        "    is_anonymous int,\n" +
+                        "    primary key (author, subreplyid),\n" +
+                        "    foreign key (author) references author (name),\n" +
+                        "    foreign key (subreplyid) references subreply (id)\n" +
                         ");");
                 con.commit();
                 stmt0.close();
@@ -946,14 +1052,15 @@ public class loader {
         for (int i = 0; i < replies_0.size(); i++) {
             Replies replies1 = replies_0.get(i);
             subreply subreply = new subreply();
-            subreply.setId(i);
+            subreply.setId(subreplies.size());
+//            System.out.println("subreplyid: "+subreply.getId());
             subreply.setAuthor(replies1.getSecondaryReplyAuthor());
             subreply.setContent(replies1.getSecondaryReplyContent());
             for (int j = 0; j < replies.size(); j++) {
-                if (replies.get(j).getContent().equals(replies_0.get(i).getReplyContent())) {
+                if (replies.get(j).getContent().equals(replies1.getReplyContent())) {
                     subreply.setReplyid(j);
                     break;
-                } else subreply.setReplyid(0);
+                }
             }
             subreply.setStars(replies1.getSecondaryReplyStars());
             subreplies.add(subreply);
@@ -994,6 +1101,7 @@ public class loader {
             String author = posts_0.get(i).getAuthor();
             author_send_post.setPostid(post_1.getPostID());
             author_send_post.setAuthor(author);
+            author_send_post.setIs_anonymous(0);
             author_send_posts.add(author_send_post);
         }
     }
@@ -1032,6 +1140,28 @@ public class loader {
                 post_category.setCategory(posts_1.getCategory().get(j));
                 post_categories.add(post_category);
             }
+        }
+    }
+
+    public static void put_author_send_reply() {
+        for (int i = 0; i < replies.size(); i++) {
+            reply reply_1 = replies.get(i);
+            author_send_reply author_send_reply = new author_send_reply();
+            author_send_reply.setReplyid(reply_1.getId());
+            author_send_reply.setAuthor(reply_1.getAuthor());
+            author_send_reply.setIs_anonymous(0);
+            author_send_replies.add(author_send_reply);
+        }
+    }
+
+    public static void put_author_send_subreply() {
+        for (int i = 0; i < subreplies.size(); i++) {
+            subreply subreply = subreplies.get(i);
+            author_send_subreply author_send_subreply = new author_send_subreply();
+            author_send_subreply.setSubreplyid(subreply.getId());
+            author_send_subreply.setAuthor(subreply.getAuthor());
+            author_send_subreply.setIs_anonymous(0);
+            author_send_subreplies.add(author_send_subreply);
         }
     }
 
@@ -1080,6 +1210,9 @@ public class loader {
         put_leader_follower();
         put_post_category();
 
+        put_author_send_reply();
+        put_author_send_subreply();
+
 
         //要不要清零
         openDB(prop);
@@ -1094,6 +1227,8 @@ public class loader {
         clearDataInTable_author_share_post();
         clearDataInTable_leader_follower();
         clearDataIntable_post_category();
+        clearDataInTable_author_send_reply();
+        clearDataInTable_author_send_subreply();
         closeDB();
 
 
@@ -1314,9 +1449,52 @@ public class loader {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        setPrepareStatement_author_send_reply();
+        try {
+            for (author_send_reply author_send_reply : author_send_replies) {
+                loadData_author_send_reply(author_send_reply);
+                if (cnt % BATCH_SIZE == 0 && cnt != 0) {
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                }
+                cnt++;
+            }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        setPrepareStatement_author_send_subreply();
+        try {
+            for (author_send_subreply author_send_subreply : author_send_subreplies) {
+                loadData_author_send_subreply(author_send_subreply);
+                if (cnt % BATCH_SIZE == 0 && cnt != 0) {
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                }
+                cnt++;
+            }
+
+            if (cnt % BATCH_SIZE != 0) {
+                stmt.executeBatch();
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
         closeDB();
     }
-    public static void show(String[] s){
+
+
+    public static void show(String[] s) {
         main(s);
     }
 }

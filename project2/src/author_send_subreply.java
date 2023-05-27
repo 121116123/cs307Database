@@ -1,6 +1,6 @@
-public class author_send_post {
+public class author_send_subreply {
     private String author;
-    private int postid;
+    private int subreplyid;
     private int is_anonymous;
 
     public void setIs_anonymous(int is_anonymous) {
@@ -10,20 +10,19 @@ public class author_send_post {
     public int getIs_anonymous() {
         return is_anonymous;
     }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-    public int getPostid() {
-        return postid;
+    public void setSubreplyid(int subreplyid) {
+        this.subreplyid = subreplyid;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setPostid(int postid) {
-        this.postid = postid;
+    public int getSubreplyid() {
+        return subreplyid;
     }
 }
