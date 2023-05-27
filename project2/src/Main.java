@@ -18,7 +18,8 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        loader.main(args);
+//        loader.main(args);
+        load(args);
         String author_name = login_or_setup();
         System.out.println("au=" + author_name);
         while (true) {
@@ -44,6 +45,11 @@ public class Main {
                 break;
             }
         }
+    }
+
+
+    public static void load(String[]args){
+        loader.main(args);
     }
 
     public static String login_or_setup() {

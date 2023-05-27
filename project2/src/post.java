@@ -2,10 +2,19 @@ import java.sql.Timestamp;
 
 public class post {
     private int ID;
+    private String author;
     private String title;
     private String content;
     private Timestamp posting_time;
     private String posting_city;
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
 
     public void setID(int ID) {
         this.ID = ID;

@@ -67,8 +67,8 @@ public class loader {
 
     public static void setPrepareStatement_post() {
         try {
-            stmt = con.prepareStatement("insert into post(id, title, content, posting_time, posting_city)  " +
-                    "VALUES (?,?,?,?,?);");
+            stmt = con.prepareStatement("insert into post(id, author,title, content, posting_time, posting_city)  " +
+                    "VALUES (?,?,?,?,?,?);");
         } catch (SQLException e) {
             System.err.println("Insert statement failed");
             System.err.println(e.getMessage());
@@ -246,10 +246,11 @@ public class loader {
         if (con != null) {
             try {
                 stmt.setInt(1, post.getID());
-                stmt.setString(2, post.getTitle());
-                stmt.setString(3, post.getContent());
-                stmt.setTimestamp(4, post.getPosting_time());
-                stmt.setString(5, post.getPosting_city());
+                stmt.setString(2,post.getAuthor());
+                stmt.setString(3, post.getTitle());
+                stmt.setString(4, post.getContent());
+                stmt.setTimestamp(5, post.getPosting_time());
+                stmt.setString(6, post.getPosting_city());
                 stmt.executeUpdate();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -440,11 +441,12 @@ public class loader {
                         "     city已知\n" +
                         "     */\n" +
                         "    ID           int primary key unique not null,\n" +
+                        "    author       varchar,\n" +
                         "    title        varchar,\n" +
                         "    content      varchar,\n" +
                         "    posting_time timestamp,\n" +
                         "    posting_city varchar\n" +
-                        ");\n");
+                        ");");
                 con.commit();
                 stmt0.close();
             } catch (SQLException ex) {
@@ -883,6 +885,7 @@ public class loader {
             post post = new post();
             Posts posts_1 = posts_0.get(i);
             post.setID(posts_1.getPostID());
+            post.setAuthor(posts_1.getAuthor());
             post.setContent(posts_1.getContent());
             post.setTitle(posts_1.getTitle());
             post.setPosting_time(posts_1.getPostingTime());
@@ -1312,5 +1315,8 @@ public class loader {
             throw new RuntimeException(e);
         }
         closeDB();
+    }
+    public static void show(String[] s){
+        main(s);
     }
 }

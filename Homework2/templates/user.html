@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Blogs</title>
+	<link href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+
+<body>
+	<div style="width:100%;background-color:#363636">
+		<ul class="nav nav-pills">
+            <li><a href="admin"><p style="font-size:18px;" >博客大厅 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欢迎您&nbsp;{{ username }}</p></a></li>
+
+		</ul>
+	</div>
+	<div class="row">
+		<div class="col-md-2">
+			<ul id="main-nav" class="nav nav-tabs nav-stacked">
+                <li>
+					<a href="/post"><i class="glyphicon glyphicon-star-empty"></i>&nbsp;&nbsp;&nbsp;发布帖子</a>
+				</li>
+                <li>
+					<a href="/mypost"><i class="glyphicon glyphicon-file"></i>&nbsp;&nbsp;&nbsp;我的发布</a>
+				</li>
+				<li>
+					<a href="/thumbup"><i class="glyphicon glyphicon-file"></i>&nbsp;&nbsp;&nbsp;我的点赞</a>
+				</li>
+				<li>
+					<a href="/collection"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;&nbsp;我的收藏</a>
+				</li>
+				<li>
+					<a href="/follow"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;&nbsp;我的关注</a>
+				</li>
+				 <li>
+					<a href="/lookup"><i class="glyphicon glyphicon-star-empty"></i>&nbsp;&nbsp;&nbsp;查看并回复帖子</a>
+				</li>
+				 <li>
+					<a href="/reply"><i class="glyphicon glyphicon-cog"></i>&nbsp;&nbsp;&nbsp;我的回复</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="col-md-10">
+            <div style="width: 80%">
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div style="height:10px"></div>
+                        <div style="text-align:center;"><input type="button" style="width:30%;text-align:center;" value="Fresh" id="btn1"></div>
+                    </div>
+                </div>
+                <div style="height:10px"></div>
+            </div>
+            <script type="text/javascript">
+                var tablelist  = [];
+                $(function () {
+                    $('#btn1').click(function () {
+                        $.ajax({
+                            url : '/get_poster',
+                            type: 'post',
+                            async: false,
+                            data: {},
+                            dataType: 'json',
+                            success: function (data) {
+                                $('#table').bootstrapTable('destroy');   //销毁表格
+                                tablelist = data.return;
+                                //alert(tablelist)
+                                $('#table').bootstrapTable({
+                                    //url: '/eventextraction_handle',
+                                    method: "post",
+                                    data: tablelist,
+                                    dataType: "json",
+                                    height: 500,
+                                    striped: true, //是否显示行间隔色
+                                    pagination: true,                   //是否显示分页（*）
+                                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                                    pageNumber: 1,                       //初始化加载第一页，默认第一页
+                                    pageSize: 8,                       //每页的记录行数（*）
+                                    pageList: [4,8],        //可供选择的每页的行数（*）
+                                    showRefresh : false,//刷新按钮
+                                    showToggle:false,//显示一行是否改成竖着
+                                    showPaginationSwitch:false,//是否显示 下面的分页框
+                                    search: false, // 是否显示搜索框
+                                    uniqueId: "id",//每一行的唯一标识，一般为主键列
+                                    toolbal:'#toolbar',
+                                    columns: [{
+                                        field: 'u1',
+                                        title: '发表的用户',
+                                        align: 'center'
+                                    },{
+                                        field: 'c1',
+                                        title: '博客内容',
+                                        align: 'left'
+                                    }, {
+                                        title: '操作',
+                                        field: 'fieldId',
+                                        width: '100px',
+                                        align: 'center',
+                                        events:window.operateEvents={
+                                            "click #t1":function(e,value,row){
+                                                $.ajax({
+                                                    url : '/tripleadd',
+                                                    type: 'post',
+                                                    async: false,
+                                                    data: {},
+                                                    dataType: 'json',
+                                                });
+                                            },
+                                        },
+                                        formatter : aFormatter
+                                    }],
+                                    onLoadSuccess: function () {
+                                    },
+                                    onLoadError: function () {
+                                        showTips("数据加载失败！");
+                                    }
+
+                                });
+                                function aFormatter(value, row, index) {//操作
+                                    return ['<button id="t1" class="btn btn-info btn-xs">保留</button>'].join("")
+                                };
+                            }
+                        })
+
+                    })
+                });
+            </script>
+
+
+            <div style="width: 80%">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">所有博客</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped" id="table"></table>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</body>
+</html>

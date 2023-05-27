@@ -1,0 +1,52 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="38">
+            <item index="0" class="java.lang.String" itemvalue="tiktoken" />
+            <item index="1" class="java.lang.String" itemvalue="tweepy" />
+            <item index="2" class="java.lang.String" itemvalue="undetected-chromedriver" />
+            <item index="3" class="java.lang.String" itemvalue="grlibs" />
+            <item index="4" class="java.lang.String" itemvalue="scikit-learn" />
+            <item index="5" class="java.lang.String" itemvalue="python-dotenv" />
+            <item index="6" class="java.lang.String" itemvalue="requests" />
+            <item index="7" class="java.lang.String" itemvalue="pypandoc_binary" />
+            <item index="8" class="java.lang.String" itemvalue="newrelic" />
+            <item index="9" class="java.lang.String" itemvalue="docx2txt" />
+            <item index="10" class="java.lang.String" itemvalue="selenium" />
+            <item index="11" class="java.lang.String" itemvalue="playwright" />
+            <item index="12" class="java.lang.String" itemvalue="langchain" />
+            <item index="13" class="java.lang.String" itemvalue="markdown" />
+            <item index="14" class="java.lang.String" itemvalue="PyPDF2" />
+            <item index="15" class="java.lang.String" itemvalue="langid" />
+            <item index="16" class="java.lang.String" itemvalue="retry" />
+            <item index="17" class="java.lang.String" itemvalue="Flask" />
+            <item index="18" class="java.lang.String" itemvalue="transformers" />
+            <item index="19" class="java.lang.String" itemvalue="fake_useragent" />
+            <item index="20" class="java.lang.String" itemvalue="pymongo" />
+            <item index="21" class="java.lang.String" itemvalue="faiss-cpu" />
+            <item index="22" class="java.lang.String" itemvalue="readability-lxml" />
+            <item index="23" class="java.lang.String" itemvalue="pinecone-client" />
+            <item index="24" class="java.lang.String" itemvalue="asgiref" />
+            <item index="25" class="java.lang.String" itemvalue="pypdf" />
+            <item index="26" class="java.lang.String" itemvalue="pandas" />
+            <item index="27" class="java.lang.String" itemvalue="openai" />
+            <item index="28" class="java.lang.String" itemvalue="anti-useragent" />
+            <item index="29" class="java.lang.String" itemvalue="sentence_transformers" />
+            <item index="30" class="java.lang.String" itemvalue="wechatpy" />
+            <item index="31" class="java.lang.String" itemvalue="millify" />
+            <item index="32" class="java.lang.String" itemvalue="google-api-python-client" />
+            <item index="33" class="java.lang.String" itemvalue="webdriver_manager" />
+            <item index="34" class="java.lang.String" itemvalue="pycryptodome" />
+            <item index="35" class="java.lang.String" itemvalue="tencentcloud-sdk-python" />
+            <item index="36" class="java.lang.String" itemvalue="vika" />
+            <item index="37" class="java.lang.String" itemvalue="newspaper3k" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

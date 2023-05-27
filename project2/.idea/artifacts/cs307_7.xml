@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact name="cs307_7">
+    <output-path>$PROJECT_DIR$/out/artifacts/cs307_7</output-path>
+    <root id="root">
+      <element id="archive" name="project2.jar">
+        <element id="module-output" name="project2" />
+      </element>
+      <element id="library" level="project" name="fastjson-1.2.79" />
+      <element id="library" level="project" name="gson-2.10.1" />
+      <element id="library" level="project" name="postgresql-42.2.5" />
+    </root>
+  </artifact>
+</component>
