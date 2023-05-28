@@ -2,6 +2,15 @@
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
+import static java.util.Arrays.copyOfRange;
+
 
 public class Main {
     public static List<author> authors = loader.authors;
@@ -19,14 +28,23 @@ public class Main {
     public static List<author_send_subreply> author_send_subreplies = loader.author_send_subreplies;
 
     public static void main(String[] args) {
+        Socket socket = server_init();
+        StringBuffer s = from_client(socket);
+        System.out.println("[Form Client] " + s);
         Scanner input = new Scanner(System.in);
 //        loader.main(args);
         load(args);
         String author_name = login_or_setup();
         System.out.println("au=" + author_name);
         while (true) {
-            System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n");
-            int what_to_do = input.nextInt();
+//            System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n");
+            String to_c = "what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n";
+            to_client(socket, to_c);
+//            int what_to_do = input.nextInt();
+            StringBuffer stringBuffer = from_client(socket);
+            String string=stringBuffer.toString();
+            int what_to_do=string.charAt(0) - '0';
+            System.out.println("what_to_do: "+what_to_do);
             if (what_to_do == 1) {
                 author_favorite_share_like_post(author_name);
             } else if (what_to_do == 2) {
@@ -49,6 +67,61 @@ public class Main {
         }
     }
 
+    public static StringBuffer from_client(Socket socket) {
+        while (true) {
+            InputStream in;
+            try {
+                in = socket.getInputStream();
+                byte[] b = new byte[512];
+                StringBuffer sb = new StringBuffer();
+                String s;
+                int x = in.read(b);
+                if (x != -1) {
+                    byte[] c = copyOfRange(b, 0, x);
+                    s = new String(c);
+                    sb.append(s);
+                }
+                //OutputStream out=socket.getOutputStream();
+                //System.out.println("[Form Client] "+sb);
+                return sb;
+
+//                    Scanner sc=new Scanner(System.in);
+//                    String str=sc.nextLine();
+//                    out.write(str.getBytes());
+//                    out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void to_client(Socket socket, String s) {
+        while (true) {
+            InputStream in;
+            try {
+                OutputStream out = socket.getOutputStream();
+                out.write(s.getBytes());
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Socket server_init() {
+        ServerSocket server;
+        Socket socket1 = new Socket();
+        try {
+            server = new ServerSocket(7878);
+            System.out.println("==服务器启动成功==");
+            Socket socket = server.accept();
+            return socket;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return socket1;
+
+    }
 
     public static void load(String[] args) {
         loader.main(args);
@@ -458,7 +531,6 @@ public class Main {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
 
 
         } else {
