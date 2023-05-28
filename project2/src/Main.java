@@ -1,4 +1,5 @@
 
+import java.io.StringReader;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
@@ -26,25 +27,28 @@ public class Main {
     public static List<post_category> post_categories = loader.post_categories;
     public static List<author_send_reply> author_send_replies = loader.author_send_replies;
     public static List<author_send_subreply> author_send_subreplies = loader.author_send_subreplies;
+    public static List<blocker_blocked> blocker_blockeds = new ArrayList<>();
 
     public static void main(String[] args) {
+
         Socket socket = server_init();
-        StringBuffer s = from_client(socket);
-        System.out.println("[Form Client] " + s);
-        Scanner input = new Scanner(System.in);
-//        loader.main(args);
+//        StringBuffer s = from_client(socket);
+//        System.out.println("[Form Client] " + s);
+
+        //Scanner input = new Scanner(System.in);
+
         load(args);
         String author_name = login_or_setup();
         System.out.println("au=" + author_name);
         while (true) {
-//            System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n");
-            String to_c = "what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n";
+//            System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n 7. you want to block or unblock other person\\n ");
+            String to_c = "what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n 7. you want to block or unblock other person\n ";
             to_client(socket, to_c);
-//            int what_to_do = input.nextInt();
+            int what_to_do = input.nextInt();
             StringBuffer stringBuffer = from_client(socket);
-            String string=stringBuffer.toString();
-            int what_to_do=string.charAt(0) - '0';
-            System.out.println("what_to_do: "+what_to_do);
+            String string = stringBuffer.toString();
+//            int what_to_do = string.charAt(0) - '0';
+            System.out.println("what_to_do: " + what_to_do);
             if (what_to_do == 1) {
                 author_favorite_share_like_post(author_name);
             } else if (what_to_do == 2) {
@@ -57,53 +61,14 @@ public class Main {
                 reply_post_or_reply_reply(author_name);
             } else if (what_to_do == 6) {
                 look_for_posts_or_replies_send(author_name);
+            } else if (what_to_do == 7) {
+                block_or_unblock(author_name);
             }
 
             System.out.println("if you want to exit, please type 0, If you want to continue, please type 1");
             int res = input.nextInt();
             if (res == 0) {
                 break;
-            }
-        }
-    }
-
-    public static StringBuffer from_client(Socket socket) {
-        while (true) {
-            InputStream in;
-            try {
-                in = socket.getInputStream();
-                byte[] b = new byte[512];
-                StringBuffer sb = new StringBuffer();
-                String s;
-                int x = in.read(b);
-                if (x != -1) {
-                    byte[] c = copyOfRange(b, 0, x);
-                    s = new String(c);
-                    sb.append(s);
-                }
-                //OutputStream out=socket.getOutputStream();
-                //System.out.println("[Form Client] "+sb);
-                return sb;
-
-//                    Scanner sc=new Scanner(System.in);
-//                    String str=sc.nextLine();
-//                    out.write(str.getBytes());
-//                    out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void to_client(Socket socket, String s) {
-        while (true) {
-            InputStream in;
-            try {
-                OutputStream out = socket.getOutputStream();
-                out.write(s.getBytes());
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -120,7 +85,63 @@ public class Main {
             e.printStackTrace();
         }
         return socket1;
+    }
 
+
+    public static String from_client_next(Socket socket) {
+        InputStream in;
+        while (true) {
+            try {
+                in = socket.getInputStream();
+                byte[] b = new byte[512];
+                StringBuffer sb = new StringBuffer();
+                String s;
+                int x = in.read(b);
+                if (x != -1) {
+                    byte[] c = copyOfRange(b, 0, x);
+                    s = new String(c);
+                    sb.append(s);
+                }
+                return sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static int from_client_int(Socket socket) {
+        InputStream in;
+        while (true) {
+            try {
+                in = socket.getInputStream();
+                byte[] b = new byte[512];
+                StringBuffer sb = new StringBuffer();
+                String s;
+                int x = in.read(b);
+                if (x != -1) {
+                    byte[] c = copyOfRange(b, 0, x);
+                    s = new String(c);
+                    sb.append(s);
+                }
+                int i = Integer.parseInt(sb.toString());
+                return i;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void to_client_sout(Socket socket, String s) {
+        while (true) {
+            try {
+                OutputStream out = socket.getOutputStream();
+                out.write(s.getBytes());
+                out.flush();
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void load(String[] args) {
@@ -208,7 +229,7 @@ public class Main {
     public static void author_favorite_share_like_post(String author_name) {
 //        System.out.println(author_name);
         Scanner input = new Scanner(System.in);
-        System.out.println("if you know which post you want to do with, please type 1, if you want to choose 1 according to category, please type 0");
+        System.out.println("if you know which post you want to do with, please type 1, if you want to choose one according to category, please type 0");
         int postid = 0;
         //get postid
         if (input.nextInt() == 1) {
@@ -235,61 +256,76 @@ public class Main {
         //do with post id
         for (post post : posts) {
             if (post.getID() == postid) {
-                System.out.printf("the title of the post is %s\n, the content is %s\n", post.getTitle(), post.getContent());
-                System.out.println("type 1 to favorite it, type 2 to share it, type 3 to like it");
-                int what_to_do = input.nextInt();
-                if (what_to_do == 1) {
-                    author_favorite_post author_favorite_post = new author_favorite_post();
-                    author_favorite_post.setAuthor(author_name);
-                    author_favorite_post.setPostid(post.getID());
-                    System.out.println("aufa.au= " + author_favorite_post.getAuthor());
-                    author_favorite_posts.add(author_favorite_post);
-
-                    Properties prop = loader.loadDBUser();
-                    loader.openDB(prop);
-                    loader.setPrepareStatement_author_favorite_post();
-                    try {
-                        loader.loadData_author_favorite_post(author_favorite_post);//do insert command
-                        loader.stmt.executeBatch();
-                        loader.con.commit();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                } else if (what_to_do == 2) {
-                    author_share_post author_share_post = new author_share_post();
-                    author_share_post.setAuthor(author_name);
-                    author_share_post.setPostid(post.getID());
-                    author_share_posts.add(author_share_post);
-
-                    Properties prop = loader.loadDBUser();
-                    loader.openDB(prop);
-                    loader.setPrepareStatement_author_share_post();
-                    try {
-                        loader.loadData_author_share_post(author_share_post);//do insert command
-                        loader.stmt.executeBatch();
-                        loader.con.commit();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    author_like_post author_like_post = new author_like_post();
-                    author_like_post.setAuthor(author_name);
-                    author_like_post.setPostid(post.getID());
-                    author_like_posts.add(author_like_post);
-
-                    Properties prop = loader.loadDBUser();
-                    loader.openDB(prop);
-                    loader.setPrepareStatement_author_like_post();
-                    try {
-                        loader.loadData_author_like_post(author_like_post);//do insert command
-                        loader.stmt.executeBatch();
-                        loader.con.commit();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                String sender = new String();
+                for (int i = 0; i < posts.size(); i++) {
+                    if (postid == posts.get(i).getID()) {
+                        sender = posts.get(i).getAuthor();
+                        break;
                     }
                 }
-                return;
+                boolean exist = false;
+                for (int i = 0; i < blocker_blockeds.size(); i++) {
+                    if (blocker_blockeds.get(i).getBlocker_name().equals(author_name) && blocker_blockeds.get(i).getBlocked_name().equals(sender))
+                        exist = true;
+                    break;
+                }
+                if (!exist) {
+                    System.out.printf("the title of the post is %s\n, the content is %s\n", post.getTitle(), post.getContent());
+                    System.out.println("type 1 to favorite it, type 2 to share it, type 3 to like it");
+                    int what_to_do = input.nextInt();
+                    if (what_to_do == 1) {
+                        author_favorite_post author_favorite_post = new author_favorite_post();
+                        author_favorite_post.setAuthor(author_name);
+                        author_favorite_post.setPostid(post.getID());
+                        System.out.println("aufa.au= " + author_favorite_post.getAuthor());
+                        author_favorite_posts.add(author_favorite_post);
+
+                        Properties prop = loader.loadDBUser();
+                        loader.openDB(prop);
+                        loader.setPrepareStatement_author_favorite_post();
+                        try {
+                            loader.loadData_author_favorite_post(author_favorite_post);//do insert command
+                            loader.stmt.executeBatch();
+                            loader.con.commit();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    } else if (what_to_do == 2) {
+                        author_share_post author_share_post = new author_share_post();
+                        author_share_post.setAuthor(author_name);
+                        author_share_post.setPostid(post.getID());
+                        author_share_posts.add(author_share_post);
+
+                        Properties prop = loader.loadDBUser();
+                        loader.openDB(prop);
+                        loader.setPrepareStatement_author_share_post();
+                        try {
+                            loader.loadData_author_share_post(author_share_post);//do insert command
+                            loader.stmt.executeBatch();
+                            loader.con.commit();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        author_like_post author_like_post = new author_like_post();
+                        author_like_post.setAuthor(author_name);
+                        author_like_post.setPostid(post.getID());
+                        author_like_posts.add(author_like_post);
+
+                        Properties prop = loader.loadDBUser();
+                        loader.openDB(prop);
+                        loader.setPrepareStatement_author_like_post();
+                        try {
+                            loader.loadData_author_like_post(author_like_post);//do insert command
+                            loader.stmt.executeBatch();
+                            loader.con.commit();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    return;
+                }
             }
 
         }
@@ -333,7 +369,7 @@ public class Main {
     public static void follow_others_or_cancel_follow_and_lookfor_follow_list(String author_name) {
         Scanner input = new Scanner(System.in);
         System.out.println("please enter the author you want to follow or cancel follow");
-        String wantToFollow = input.nextLine();
+        String wantToFollow = input.next();
         String user = author_name;
         boolean isFollowing = false;//是否已经关注
         List<String> thisUserFollow = new ArrayList<>();
@@ -670,6 +706,64 @@ public class Main {
                 }
             }
         }
+    }
+
+    public static void block_or_unblock(String author_name) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("please enter the author name you want to block or unblock: ");
+        String dowith = input.next();
+        boolean exist = false;
+        for (int i = 0; i < blocker_blockeds.size(); i++) {
+            if (blocker_blockeds.get(i).getBlocker_name().equals(author_name) && blocker_blockeds.get(i).getBlocked_name().equals(dowith)) {
+                exist = true;
+                System.out.println("you have blocked him before, do you want to unblock him? enter 1 to unblock him, enter 0 to cancel");
+                int want_unblock = input.nextInt();
+                if (want_unblock == 1) {
+                    Properties prop = loader.loadDBUser();
+                    loader.openDB(prop);
+                    loader.set_delete_PrepareStatement_blocker_blocked(); // 设置预处理语句
+
+                    try {
+                        loader.deleteData_blocker_blocked(blocker_blockeds.get(i)); // 执行删除操作
+                        loader.con.commit(); // 提交事务
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    blocker_blockeds.remove(i);
+
+                }
+                break;
+            }
+        }
+        if (!exist) {
+            System.out.println("do you sure you want to block him? once do it, you can't see the posts he send, but you can unblock him at anytime. enter 1 to block him, enter 0 to cancel");
+            int want_block = input.nextInt();
+            if (want_block == 1) {
+                blocker_blocked blocker_blocked = new blocker_blocked();
+                blocker_blocked.setBlocker_name(author_name);
+                blocker_blocked.setBlocked_name(dowith);
+                blocker_blockeds.add(blocker_blocked);
+
+                Properties prop = loader.loadDBUser();
+                loader.openDB(prop);
+                loader.setPrepareStatement_blocker_blocked(); // 设置预处理语句
+
+                try {
+                    loader.loadData_blocker_blocked(blocker_blocked); // 执行删除操作
+                    loader.con.commit(); // 提交事务
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        System.out.println("the authors you blocked as following: ");
+        for (int i = 0; i < blocker_blockeds.size(); i++) {
+            if (blocker_blockeds.get(i).getBlocker_name().equals(author_name)) {
+                System.out.println(blocker_blockeds.get(i).getBlocked_name());
+            }
+        }
+        System.out.println();
     }
 
 }

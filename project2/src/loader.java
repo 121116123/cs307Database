@@ -179,6 +179,18 @@ public class loader {
         }
     }
 
+    public static void setPrepareStatement_blocker_blocked() {
+        try {
+            stmt = con.prepareStatement("insert into blocker_blocked(blocker_name,blocked_name)  " +
+                    "VALUES (?,?);");
+        } catch (SQLException e) {
+            System.err.println("Insert statement failed");
+            System.err.println(e.getMessage());
+            closeDB();
+            System.exit(1);
+        }
+    }
+
     public static void setPrepareStatement_post_category() {
         try {
             stmt = con.prepareStatement("insert into post_category(postid,category)  " +
@@ -218,6 +230,17 @@ public class loader {
     public static void set_delete_PrepareStatement_leader_follower() {
         try {
             stmt = con.prepareStatement("DELETE FROM leader_follower WHERE leader = ? AND follower = ?");
+        } catch (SQLException e) {
+            System.err.println("Prepare statement failed");
+            System.err.println(e.getMessage());
+            closeDB();
+            System.exit(1);
+        }
+    }
+
+    public static void set_delete_PrepareStatement_blocker_blocked() {
+        try {
+            stmt = con.prepareStatement("delete from blocker_blocked where blocker_name = ? and blocked_name= ?");
         } catch (SQLException e) {
             System.err.println("Prepare statement failed");
             System.err.println(e.getMessage());
@@ -399,6 +422,19 @@ public class loader {
         }
     }
 
+    public static void loadData_blocker_blocked(blocker_blocked blocker_blocked) {
+//        String[] lineData = line.split(";");
+        if (con != null) {
+            try {
+                stmt.setString(1, blocker_blocked.getBlocker_name());
+                stmt.setString(2, blocker_blocked.getBlocked_name());
+                stmt.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
     public static void loadData_post_category(post_category post_category) {
 //        String[] lineData = line.split(";");
         if (con != null) {
@@ -417,6 +453,18 @@ public class loader {
             try {
                 stmt.setString(1, leader_follower.getLeader());
                 stmt.setString(2, leader_follower.getFollower());
+                stmt.executeUpdate(); // 执行删除操作
+            } catch (SQLException ex) {
+                throw ex;
+            }
+        }
+    }
+
+    public static void deleteData_blocker_blocked(blocker_blocked blocker_blocked) throws SQLException {
+        if (con != null) {
+            try {
+                stmt.setString(1, blocker_blocked.getBlocker_name());
+                stmt.setString(2, blocker_blocked.getBlocked_name());
                 stmt.executeUpdate(); // 执行删除操作
             } catch (SQLException ex) {
                 throw ex;
@@ -779,6 +827,27 @@ public class loader {
         }
     }
 
+    public static void clearDataInTable_blocker_blocked() {
+        Statement stmt0;
+        if (con != null) {
+            try {
+                stmt0 = con.createStatement();
+                stmt0.executeUpdate("drop table if exists blocker_blocked cascade ;");
+                con.commit();
+                stmt0.executeUpdate("create table blocker_blocked\n" +
+                        "(\n" +
+                        "    blocker_name varchar,\n" +
+                        "    blocked_name varchar,\n" +
+                        "    primary key (blocker_name, blocked_name)\n" +
+                        "\n" +
+                        ");");
+                con.commit();
+                stmt0.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
 
     public static void put_authors() {
         int id_length = posts_0.get(0).getAuthorID().length();
@@ -1229,6 +1298,7 @@ public class loader {
         clearDataIntable_post_category();
         clearDataInTable_author_send_reply();
         clearDataInTable_author_send_subreply();
+        clearDataInTable_blocker_blocked();
         closeDB();
 
 

@@ -9,46 +9,62 @@ import static java.util.Arrays.copyOfRange;
 
 public class Client {
     public static void main(String[] args) {
-        OutputStream out = null;
+        Socket socket = client_init();
+        Scanner in = new Scanner(System.in);
+
+        while(true){
+            String s1 = from_server(socket);
+            System.out.print("[From server]" + s1);
+
+            String s = in.nextLine();
+            to_server(socket, s);
+        }
+    }
+
+    public static Socket client_init() {
         Socket socket = null;
-        System.out.println("---客户端启动成功---");
+        System.out.println("---客户端启动---");
         try {
             //绑定到本地端口
             socket = new Socket("127.0.0.1", 7878);
             System.out.println("---客户端成功连接到服务器---");
-            //发送消息
-            while (true) {
-                out = socket.getOutputStream();
-                //输入文字，从控制台输入
-                Scanner san = new Scanner(System.in);
-                String str = san.nextLine();
-                //System.out.println("我:" + str);
-                out.write(str.getBytes());
-                out.flush();
-                //接收信息
-                InputStream in = socket.getInputStream();
-                //获取输入流里面数据并存储数据
+            return socket;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return socket;
+    }
+
+    public static String from_server(Socket socket) {
+        while (true) {
+            InputStream in;
+            try {
+                in = socket.getInputStream();
                 byte[] b = new byte[512];
                 StringBuffer sb = new StringBuffer();
                 String s;
                 int x = in.read(b);
-                if(x !=-1){
-                    byte [] c = copyOfRange(b, 0, x);
-                    s=new String(c);
+                if (x != -1) {
+                    byte[] c = copyOfRange(b, 0, x);
+                    s = new String(c);
                     sb.append(s);
                 }
-                System.out.println("[From Server] " + sb);
+                //in.close();
+                return sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        }
+    }
+
+    public static void to_server(Socket socket, String s) {
+        while (true) {
             try {
-                if (out != null) {
-                    out.close();
-                }
-                if (socket != null) {
-                    socket.close();
-                }
+                OutputStream out = socket.getOutputStream();
+                out.write(s.getBytes());
+                out.flush();
+                //out.close();
+                break;
             } catch (IOException e) {
                 e.printStackTrace();
             }
