@@ -11,13 +11,17 @@ public class Client {
     public static void main(String[] args) {
         Socket socket = client_init();
         Scanner in = new Scanner(System.in);
-
         while(true){
             String s1 = from_server(socket);
-            System.out.print("[From server]" + s1);
+            if (s1.charAt(s1.length() -1) == '*'){
+                String s2 = s1.substring(0,s1.length()-1);
+                System.out.println("[From server]" + s2);
+            }else{
+                System.out.println("[From server]" + s1);
+                String s = in.nextLine();
+                to_server(socket, s);
+            }
 
-            String s = in.nextLine();
-            to_server(socket, s);
         }
     }
 
