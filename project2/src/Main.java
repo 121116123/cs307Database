@@ -1,11 +1,12 @@
 
-import java.io.StringReader;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.*;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -32,22 +33,28 @@ public class Main {
     public static void main(String[] args) {
 
         Socket socket = server_init();
-//        StringBuffer s = from_client(socket);
-//        System.out.println("[Form Client] " + s);
 
-        //Scanner input = new Scanner(System.in);
         to_client_sout_no_input(socket, "Waiting db loading...\n");
         load(args);
+
         String author_name = login_or_setup(socket);
 
+
         while (true) {
-//            System.out.println("what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n 7. you want to block or unblock other person\\n ");
-            String to_c = "what do you want to do? you can choose a number from 1~6, each number represents an operation,\n 1. You want to favorite, like, or share post,\n 2. You want to view the favorite, like or share list of a post,\n 3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n 4. you want to create a post\n 5. you want to reply a post or reply a reply\n 6. you want to own your own posts or replies\n 7. you want to block or unblock other person\n ";
-            to_client_sout(socket, to_c);
+            to_client_sout_no_input(socket, "what do you want to do? you can choose a number from 1~9, each number represents an operation,\n");
+            to_client_sout_no_input(socket, "1. You want to favorite, like, or share post,\n");
+            to_client_sout_no_input(socket, "2. You want to view the favorite, like or share list of a post,\n");
+            to_client_sout_no_input(socket, "3. you want to follow or unfollow other users, and you can also view the user list you have been followed.\n");
+            to_client_sout_no_input(socket, "4. you want to create a post\n");
+            to_client_sout_no_input(socket, "5. you want to reply a post or reply a reply\n");
+            to_client_sout_no_input(socket, "6. you want to own your own posts or replies\n");
+            to_client_sout_no_input(socket, "7. you want to block or unblock other person\n");
+            to_client_sout_no_input(socket, "8. You want to see the more popular post\n");
+            to_client_sout(socket, "9. you want to look for posts according to author and posting_time \n");
+
+
             int what_to_do = from_client_int(socket);
-            //String string = from_client_next(socket);
-//            int what_to_do = string.charAt(0) - '0';
-            to_client_sout_no_input(socket, "what_to_do: " + what_to_do);
+            to_client_sout_no_input(socket, "what_to_do: " + what_to_do + "\n");
             if (what_to_do == 1) {
                 author_favorite_share_like_post(socket, author_name);
             } else if (what_to_do == 2) {
@@ -62,6 +69,10 @@ public class Main {
                 look_for_posts_or_replies_send(socket, author_name);
             } else if (what_to_do == 7) {
                 block_or_unblock(socket, author_name);
+            } else if (what_to_do == 8) {
+                find_most_like_post(socket);
+            } else if (what_to_do == 9) {
+                find_post_by_time_and_author(socket);
             }
 
             to_client_sout(socket, "if you want to exit, please type 0, If you want to continue, please type 1");
@@ -91,7 +102,7 @@ public class Main {
         while (true) {
             try {
                 in = socket.getInputStream();
-                byte[] b = new byte[512];
+                byte[] b = new byte[8192];
                 StringBuffer sb = new StringBuffer();
                 String s;
                 int x = in.read(b);
@@ -112,7 +123,7 @@ public class Main {
         while (true) {
             try {
                 in = socket.getInputStream();
-                byte[] b = new byte[512];
+                byte[] b = new byte[8192];
                 StringBuffer sb = new StringBuffer();
                 String s;
                 int x = in.read(b);
@@ -184,7 +195,7 @@ public class Main {
             }
         } else {
             author_name = set_new_author(socket);
-            to_client_sout_no_input(socket, author_name);
+//            to_client_sout_no_input(socket, author_name);
         }
         return author_name;
     }
@@ -250,23 +261,25 @@ public class Main {
             to_client_sout(socket, "Please enter the ID of the post you want to operate");
             postid = from_client_int(socket);
         } else {
+            StringBuilder stringBuilder = new StringBuilder();
             for (int i = 0; i < categories.size(); i++) {
-                to_client_sout_no_input(socket, i + " " + categories.get(i).getContent());
+                stringBuilder.append(i).append(" ").append(categories.get(i).getContent()).append("\n");
             }
+            to_client_sout_no_input(socket, stringBuilder.toString());
             to_client_sout(socket, "The above is the categories we have. What kind of post do you want to read? Please enter the number before the category");
             int id = from_client_int(socket);
             String category_content = categories.get(id).getContent();
             to_client_sout_no_input(socket, "there are some posts about that, you can choose a postid to view the details");
             List<post> category_posts = new ArrayList<>();
+            StringBuilder stringBuilder1 = new StringBuilder();
             for (post_category post_category : post_categories) {
                 if (post_category.getCategory().equals(category_content)) {
-                    to_client_sout_no_input(socket, post_category.getPostid() + " ");
+                    stringBuilder1.append(post_category.getPostid()).append("\n");
                     category_posts.add(posts.get(post_category.getPostid()));
                 }
             }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////show_posts_category(category_posts);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            to_client_sout_no_input(socket, stringBuilder1.toString());
+            show_posts_list(socket, category_posts);
             to_client_sout(socket, "which post will you choose? Please select the post you want to see according to the above ID");
             postid = from_client_int(socket);
         }
@@ -290,7 +303,7 @@ public class Main {
                     break;
                 }
                 if (!exist) {
-                    to_client_sout_no_input(socket, "the title of the post is: \n" + post.getTitle() + "\n the content is: \n" + post.getContent() + "\n");
+                    to_client_sout_no_input(socket, "the title of the post is: \n" + post.getTitle() + "\nthe content is: \n" + post.getContent() + "\n");
                     to_client_sout(socket, "type 1 to favorite it, type 2 to share it, type 3 to like it");
                     int what_to_do = from_client_int(socket);
                     if (what_to_do == 1) {
@@ -298,7 +311,6 @@ public class Main {
                         author_favorite_post.setAuthor(author_name);
                         author_favorite_post.setPostid(post.getID());
                         author_favorite_posts.add(author_favorite_post);
-
                         Properties prop = loader.loadDBUser();
                         loader.openDB(prop);
                         loader.setPrepareStatement_author_favorite_post();
@@ -361,43 +373,37 @@ public class Main {
         to_client_sout(socket, "which list do you want to view? enter 1 to see favorites, type 2 to see shares, type 3 to see likes");
         int type = from_client_int(socket);
         if (type == 1) {
-            List<String> favoriters = new ArrayList<>();
             to_client_sout_no_input(socket, "who favorites the post: ");
+            StringBuilder stringBuilder = new StringBuilder();
             for (author_favorite_post author_favorite_post : author_favorite_posts) {
                 if (author_favorite_post.getPostid() == postid) {
                     String author = author_favorite_post.getAuthor();
-                    to_client_sout_no_input(socket, author + "\n");
-                    favoriters.add(author);
+                    stringBuilder.append(author);
+                    stringBuilder.append("\n");
                 }
             }
-////////////////////////////////////////////////////////////
-///////////show_String(favoriters)/////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+            to_client_sout_no_input(socket, stringBuilder.toString());
         } else if (type == 2) {
-            List<String> sharers = new ArrayList<>();
             to_client_sout_no_input(socket, "who shares the post: ");
+            StringBuilder stringBuilder = new StringBuilder();
             for (author_share_post author_share_post : author_share_posts) {
                 if (author_share_post.getPostid() == postid) {
-                    to_client_sout_no_input(socket, author_share_post.getAuthor());
-                    sharers.add(author_share_post.getAuthor());
+                    stringBuilder.append(author_share_post.getAuthor());
+                    stringBuilder.append("\n");
                 }
             }
-////////////////////////////////////////////////////////////
-///////////show_String(sharers)/////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+            to_client_sout_no_input(socket, stringBuilder.toString());
 
         } else if (type == 3) {
-            List<String> likers = new ArrayList<>();
             to_client_sout_no_input(socket, "who likes the post: ");
+            StringBuilder stringBuilder = new StringBuilder();
             for (author_like_post author_like_post : author_like_posts) {
                 if (author_like_post.getPostid() == postid) {
-                    to_client_sout_no_input(socket, author_like_post.getAuthor());
-                    likers.add(author_like_post.getAuthor());
+                    stringBuilder.append(author_like_post.getAuthor());
+                    stringBuilder.append("\n");
                 }
             }
-////////////////////////////////////////////////////////////
-///////////show_String(sharers)/////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+            to_client_sout_no_input(socket, stringBuilder.toString());
         }
 
     }
@@ -474,13 +480,13 @@ public class Main {
         }
         to_client_sout_no_input(socket, "the authors you follow: ");
         if (thisUserFollow.size() == 0) {
-            to_client_sout_no_input(socket, "null");
+            to_client_sout_no_input(socket, "null                                              \n");
         }
+        StringBuilder stringBuilder = new StringBuilder();
         for (String a : thisUserFollow) {
-            to_client_sout_no_input(socket, a + " " + "\n");
+            stringBuilder.append(a + " " + "\n");
         }
-///////////show_String(thisuserfollow)///////////////////////////////////////
-//////////////////////////////////////////////////////////////////
+        to_client_sout_no_input(socket, stringBuilder.toString());
     }
 
     public static void send_post(Socket socket, String author_name) {
@@ -560,9 +566,9 @@ public class Main {
         int temp = from_client_int(socket);
         if (temp == 0) {
             to_client_sout(socket, "Please enter the postid of the post you want to reply");
-            int postid =from_client_int(socket);
-            to_client_sout(socket,"Please enter the reply content:");
-            String content =from_client_next(socket);
+            int postid = from_client_int(socket);
+            to_client_sout(socket, "Please enter the reply content:");
+            String content = from_client_next(socket);
             int stars = 0;
             int id = replies.size();
             reply x = new reply();
@@ -604,9 +610,9 @@ public class Main {
 
 
         } else {
-            to_client_sout(socket,"Please enter the replyid of the reply you want to reply");
+            to_client_sout(socket, "Please enter the replyid of the reply you want to reply");
             int subreplyid = from_client_int(socket);
-            to_client_sout(socket,"Please enter the reply content:");
+            to_client_sout(socket, "Please enter the reply content:");
             String content = from_client_next(socket);
             int stars = 0;
             int id = subreplies.size();
@@ -685,63 +691,67 @@ public class Main {
             }
         }
 
-        to_client_sout_no_input(socket,"postsend:");
+        StringBuilder stringBuilder1 = new StringBuilder();
+        stringBuilder1.append("postsend:");
         if (postsend.size() == 0) {
-            to_client_sout_no_input(socket,"null");
+            stringBuilder1.append("null                                              ");
         }
         for (post post : postsend) {
-            to_client_sout_no_input(socket,"postid: " + post.getID()+"\n"+"title: " + post.getTitle()+"\n"+"content: " + post.getContent()+"\n");
+            stringBuilder1.append("postid: " + post.getID() + "\n" + "title: " + post.getTitle() + "\n" + "content: " + post.getContent() + "\n");
             for (int i = 0; i < author_send_posts.size(); i++) {
                 if (author_send_posts.get(i).getPostid() == post.getID()) {
                     if (author_send_posts.get(i).getIs_anonymous() == 1) {
-                        to_client_sout_no_input(socket,"post in anonymous");
-                    } else  to_client_sout_no_input(socket,"post in real name");
+                        stringBuilder1.append("post in anonymous" + "\n");
+                    } else stringBuilder1.append("post in real name" + "\n");
                 }
             }
         }
+        to_client_sout_no_input(socket, stringBuilder1.toString());
 
-        to_client_sout_no_input(socket,"replysend:");
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("replysend:");
         if (replysend.size() == 0) {
-            to_client_sout_no_input(socket,"null");
+            stringBuilder2.append("null\n");
         }
         for (reply reply : replysend) {
-            to_client_sout_no_input(socket, "replyid: " + reply.getId() + "\n" + "content " + reply.getContent() + "\n");
+            stringBuilder2.append("replyid: " + reply.getId() + "\n" + "content " + reply.getContent() + "\n");
             for (int i = 0; i < author_send_replies.size(); i++) {
                 if (author_send_replies.get(i).getReplyid() == reply.getId()) {
                     if (author_send_replies.get(i).getIs_anonymous() == 1) {
-                        to_client_sout_no_input(socket, "post in anonymous");
-                    } else to_client_sout_no_input(socket, "post in real name");
+                        stringBuilder2.append("post in anonymous \n");
+                    } else stringBuilder2.append("post in real name\n");
                 }
             }
         }
+        to_client_sout_no_input(socket, stringBuilder2.toString());
 
-        to_client_sout_no_input(socket,"subreplysend:");
+        StringBuilder stringBuilder3 = new StringBuilder();
+        stringBuilder3.append("subreplysend:");
         if (subreplysend.size() == 0) {
-            to_client_sout_no_input(socket,"null");
+            to_client_sout_no_input(socket, "null                                                       ");
         }
         for (subreply subreply : subreplysend) {
-            to_client_sout_no_input(socket,"id: " + subreply.getId()+"\n"+"content: " + subreply.getContent()+"\n");
+            stringBuilder3.append("id: " + subreply.getId() + "\n" + "content: " + subreply.getContent() + "\n");
             for (int i = 0; i < author_send_subreplies.size(); i++) {
                 if (author_send_subreplies.get(i).getSubreplyid() == subreply.getId()) {
                     if (author_send_subreplies.get(i).getIs_anonymous() == 1) {
-                        to_client_sout_no_input(socket,"post in anonymous");
-                    } else  to_client_sout_no_input(socket,"post in real name");
+                        stringBuilder3.append("post in anonymous\n");
+                    } else
+                        stringBuilder3.append("post in real name\n");
                 }
             }
         }
-////////////////////show_posts(postsend)
-////////////////////show_replies(replysend)
-////////////////////show_subreply(subreplysend)
+        to_client_sout_no_input(socket, stringBuilder3.toString());
     }
 
     public static void block_or_unblock(Socket socket, String author_name) {
-        to_client_sout(socket,"please enter the author name you want to block or unblock: ");
-        String dowith =from_client_next(socket);
+        to_client_sout(socket, "please enter the author name you want to block or unblock: ");
+        String dowith = from_client_next(socket);
         boolean exist = false;
         for (int i = 0; i < blocker_blockeds.size(); i++) {
             if (blocker_blockeds.get(i).getBlocker_name().equals(author_name) && blocker_blockeds.get(i).getBlocked_name().equals(dowith)) {
                 exist = true;
-                to_client_sout(socket,"you have blocked him before, do you want to unblock him? enter 1 to unblock him, enter 0 to cancel");
+                to_client_sout(socket, "you have blocked him before, do you want to unblock him? enter 1 to unblock him, enter 0 to cancel");
                 int want_unblock = from_client_int(socket);
                 if (want_unblock == 1) {
                     Properties prop = loader.loadDBUser();
@@ -762,8 +772,8 @@ public class Main {
             }
         }
         if (!exist) {
-            to_client_sout(socket,"do you sure you want to block him? once do it, you can't see the posts he send, but you can unblock him at anytime. enter 1 to block him, enter 0 to cancel");
-            int want_block =from_client_int(socket);
+            to_client_sout(socket, "do you sure you want to block him? once do it, you can't see the posts he send, but you can unblock him at anytime. enter 1 to block him, enter 0 to cancel");
+            int want_block = from_client_int(socket);
             if (want_block == 1) {
                 blocker_blocked blocker_blocked = new blocker_blocked();
                 blocker_blocked.setBlocker_name(author_name);
@@ -782,13 +792,275 @@ public class Main {
                 }
             }
         }
-        to_client_sout_no_input(socket,"the authors you blocked as following: ");
+        to_client_sout_no_input(socket, "the authors you blocked as following: ");
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < blocker_blockeds.size(); i++) {
             if (blocker_blockeds.get(i).getBlocker_name().equals(author_name)) {
-                to_client_sout_no_input(socket,blocker_blockeds.get(i).getBlocked_name());
+                stringBuilder.append(blocker_blockeds.get(i).getBlocked_name() + "                                   \n");
             }
         }
-        System.out.println();
+        to_client_sout_no_input(socket, stringBuilder.toString());
     }
 
+    public static void find_most_like_post(Socket socket) {
+        int[][] like_count = new int[posts.size()][2];
+//第一列是id，第二列是喜欢的人数
+        for (int i = 0; i < like_count.length; i++) {
+            like_count[i][0] = i;
+        }
+        for (int i = 0; i < author_like_posts.size(); i++) {
+            like_count[author_like_posts.get(i).getPostid()][1]++;
+        }
+        Arrays.sort(like_count, Comparator.comparingInt((int[] a) -> a[1]).reversed());
+        //按照like人数从多到少，第0列是id
+        List<post> most_like_post = new ArrayList<>();
+        for (int i = 0; i < like_count.length; i++) {
+            post post = posts.get(like_count[i][0]);
+            most_like_post.add(post);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < most_like_post.size(); i++) {
+            stringBuilder.append(most_like_post.get(i).getID() + "\n");
+        }
+        to_client_sout_no_input(socket, stringBuilder.toString());
+        int[] count = new int[most_like_post.size()];
+        for (int i = 0; i < most_like_post.size(); i++) {
+            int postid = most_like_post.get(i).getID();
+            for (author_like_post author_like_post : author_like_posts) {
+                int postid1 = author_like_post.getPostid();
+                if (postid == postid1) {
+                    count[i]++;
+                    break;
+                }
+            }
+        }
+        show_posts_list_add_count(socket, most_like_post,count);
+    }
+
+    public static void find_post_by_time_and_author(Socket socket) {
+        List<post> results = new ArrayList<>();
+        to_client_sout(socket, "You can set a start time, let's enter the year of the start time first: ");
+        int year_start = from_client_int(socket);
+        to_client_sout(socket, "let's enter the month of the start time: ");
+        int month_start = from_client_int(socket);
+        to_client_sout(socket, "let's enter the day of the start time: ");
+        int day_start = from_client_int(socket);
+
+        Calendar calendar_start = Calendar.getInstance();
+        calendar_start.set(year_start, month_start - 1, day_start);
+        // 获取对应的Date对象
+        Date date_start = calendar_start.getTime();
+        // 获取时间戳
+        long timestamp_start = date_start.getTime();
+
+        to_client_sout(socket, "You can set a end time, let's enter the year of the end time first: ");
+        int year_end = from_client_int(socket);
+        to_client_sout(socket, "let's enter the month of the end time: ");
+        int month_end = from_client_int(socket);
+        to_client_sout(socket, "let's enter the day of the end time: ");
+        int day_end = from_client_int(socket);
+
+        Calendar calendar_end = Calendar.getInstance();
+        calendar_end.set(year_end, month_end - 1, day_end);
+        // 获取对应的Date对象
+        Date date_end = calendar_end.getTime();
+        // 获取时间戳
+        long timestamp_end = date_end.getTime();
+
+        Date start_date = new Date(timestamp_start);
+        Date end_date = new Date(timestamp_end);
+
+        to_client_sout(socket, "enter the author name you want to look for: ");
+        String author = from_client_next(socket);
+        for (post post : posts) {
+            Date date = new Date(post.getPosting_time().getTime());
+            if (start_date.before(date) && end_date.after(date) && author.equals(post.getAuthor())) {
+                results.add(post);
+            }
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("the postids send by " + author + "in that time are following: ");
+        if (results.size() == 0) {
+            stringBuilder.append("null ");
+        }
+        for (int i = 0; i < results.size(); i++) {
+            stringBuilder.append(results.get(i).getID() + "\n");
+        }
+        to_client_sout_no_input(socket, stringBuilder.toString());
+        show_posts_list(socket, results);
+    }
+
+
+    public static void show_posts_list(Socket socket, List<post> posts) {
+
+        String s_html_content = "";
+        for (post p1 : posts) {
+            String s1 = "<div style=\"border:1px solid #4ADDFA\" class=\"blog\">\n" +
+                    "    <div class=\"title\">" + p1.getTitle() + "</div>\n" +
+                    "       <div class=\"date\">Post time: " + p1.getPosting_time().toString() +"  &nbsp;Post ID:" + p1.getID()+ "  &nbsp;&nbsp;   Author:" + p1.getAuthor() + "</div>\n" +
+                    "    <div class=\"desc\">\n" +
+                    "        " + p1.getContent() + "\n" +
+                    "    </div>\n" +
+                    "</div>\n" +
+                    "<div style=\"height: 10pt\">\n" +
+                    "</div>";
+            s_html_content += s1;
+
+        }
+
+        try {
+            ServerSocket serverSocket = new ServerSocket(12535);
+//            System.out.println("show posts in http://127.0.0.1:12535");
+            to_client_sout_no_input(socket, "show posts in http://127.0.0.1:12535");
+            while (true) {
+                Socket client = serverSocket.accept();
+                OutputStream clientOutStream = client.getOutputStream();
+                clientOutStream.write(
+                        ("HTTP/1.1 200\n"
+                                + "Content-Type: text/html\n"
+                                + "\n"
+                                + s_html_head + s_html_content + s_html_tail).getBytes()
+
+                        //
+                );
+
+                clientOutStream.flush();
+                Thread.sleep(10000);
+                clientOutStream.close();
+//                System.out.println("show posts in http://127.0.0.1:12535");
+
+                break;
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void show_posts_list_add_count(Socket socket, List<post> posts, int count[]) {
+
+        String s_html_content = "";
+        int i = 0;
+        for (post p1 : posts) {
+            String s1 = "<div style=\"border:1px solid #4ADDFA\" class=\"blog\">\n" +
+                    "    <div class=\"title\">" + p1.getTitle() + "</div>\n" +
+                    "       <div class=\"date\">Post time: " + p1.getPosting_time().toString() + "  &nbsp;Post ID:" + p1.getID() + "  &nbsp;Like:" + count[i] + ";&nbsp;   Author:" + p1.getAuthor() + "</div>\n" +
+                    "    <div class=\"desc\">\n" +
+                    "        " + p1.getContent() + "\n" +
+                    "    </div>\n" +
+                    "</div>\n" +
+                    "<div style=\"height: 10pt\">\n" +
+                    "</div>";
+            s_html_content += s1;
+            i++;
+        }
+
+        try {
+            ServerSocket serverSocket = new ServerSocket(12535);
+//            System.out.println("show posts in http://127.0.0.1:12535");
+            to_client_sout_no_input(socket, "show posts in http://127.0.0.1:12535");
+            while (true) {
+                Socket client = serverSocket.accept();
+                OutputStream clientOutStream = client.getOutputStream();
+                clientOutStream.write(
+                        ("HTTP/1.1 200\n"
+                                + "Content-Type: text/html\n"
+                                + "\n"
+                                + s_html_head + s_html_content + s_html_tail).getBytes()
+
+                        //
+                );
+
+                clientOutStream.flush();
+                Thread.sleep(10000);
+                clientOutStream.close();
+//                System.out.println("show posts in http://127.0.0.1:12535");
+
+                break;
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static String s_html_tail = ""
+            + "            </div>\n"
+            + "        </div>\n"
+            + "    </div>\n"
+            + "</div>\n"
+            + "</body>\n"
+            + "</html>";
+
+
+    public static String s_html_head = ""
+            + "            <!DOCTYPE html>\n"
+            + "            <html>\n"
+            + "            <head>\n"
+            + "                <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+            + "                <title>Blogs</title>\n"
+            + "                <link href=\"http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css\" rel=\"stylesheet\">\n"
+            + "                <script src=\"http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js\"></script>\n"
+            + "                <script src=\"http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js\"></script>\n"
+            + "                <link href=\"https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css\" rel=\"stylesheet\">\n"
+            + "                <script src=\"https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js\"></script>\n"
+            + "                <script src=\"https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js\"></script>\n"
+            + "                \n"
+            + "                <style>\n"
+            + "                    /* 表示一篇博客 */\n"
+            + "                    .blog {\n"
+            + "                        width: 100%;\n"
+            + "                        padding: 10px 20px;\n"
+            + "                    }\n"
+            + "                    \n"
+            + "                    /* 博客的标题 */\n"
+            + "                    .blog .title {\n"
+            + "                        color: black;\n"
+            + "                        font-size: 20px;\n"
+            + "                        font-weight: 700;\n"
+            + "                        text-align: center;\n"
+            + "                        padding: 10px 0;\n"
+            + "                    }\n"
+            + "                    \n"
+            + "                    /* 博客的摘要 */\n"
+            + "                    .blog .desc {\n"
+            + "                        color: #000;\n"
+            + "                        text-indent: 2em;\n"
+            + "                        margin-top: 10px;\n"
+            + "                    }\n"
+            + "                    \n"
+            + "                    .blog .date {\n"
+            + "                        color: #008000;\n"
+            + "                        margin-top: 10px;\n"
+            + "                        text-align: center;\n"
+            + "                    }\n"
+            + "                    \n"
+            + "                </style>\n"
+            + "            </head>\n"
+            + "            \n"
+            + "            <body>\n"
+            + "            <div style=\"width:100%;background-color:#363636\">\n"
+            + "                <ul class=\"nav nav-pills\">\n"
+            + "                    <li><a href=\"\"><p style=\"font-size:18px;\" >博客大厅 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</p></a></li>\n"
+            + "                </ul>\n"
+            + "            </div>\n"
+            + "            <div class=\"row\">\n"
+            + "                <div class=\"col-md-2\">\n"
+            + "                </div>\n"
+            + "                \n"
+            + "                <div class=\"col-md-10\">\n"
+            + "                \n"
+            + "                    <div style=\"width: 80%\">\n"
+            + "                        <div class=\"panel panel-info\">\n"
+            + "                            <div class=\"panel-heading\">\n"
+            + "                                <h3 class=\"panel-title\">所有博客</h3>\n"
+            + "                            </div>\n"
+            + "                            \n"
+            + "                           \n"
+            + "                        \n"
+            + " ";
+
+
 }
+

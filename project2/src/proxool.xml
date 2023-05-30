@@ -1,0 +1,11 @@
+<proxool>
+    <alias>my-pool</alias>
+    <driver-url>jdbc:postgresql://localhost:5432/proj_1</driver-url>
+    <driver-class>org.postgresql.Driver</driver-class>
+    <driver-properties>
+        <property name="user" value="checker"/>
+        <property name="password" value="123456"/>
+    </driver-properties>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-count>10</maximum-connection-count>
+</proxool>

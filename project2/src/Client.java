@@ -44,7 +44,7 @@ public class Client {
             InputStream in;
             try {
                 in = socket.getInputStream();
-                byte[] b = new byte[512];
+                byte[] b = new byte[8192];
                 StringBuffer sb = new StringBuffer();
                 String s;
                 int x = in.read(b);

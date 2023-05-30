@@ -1,3 +1,4 @@
+import Util.ProxoolUtil;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -10,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+
+import org.logicalcobwebs.proxool.ProxoolException;
+import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
 
 public class loader {
     public static final int BATCH_SIZE = 1000;
@@ -34,7 +38,7 @@ public class loader {
     public static List<author_send_subreply> author_send_subreplies = new ArrayList<>();
 
 
-    public static void openDB(Properties prop) {
+        public static void openDB(Properties prop) {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
@@ -46,8 +50,8 @@ public class loader {
         try {
             con = DriverManager.getConnection(url, prop);
             if (con != null) {
-//                System.out.println("Successfully connected to the database "
-//                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
+                System.out.println("Successfully connected to the database "
+                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
                 con.setAutoCommit(false);
             }
         } catch (SQLException e) {
@@ -56,6 +60,26 @@ public class loader {
             System.exit(1);
         }
     }
+//    public static void openDB(Properties prop) {
+//        try {
+//            // 配置 Proxool 连接池
+//            JAXPConfigurator.configure("D:\\AAAA\\study\\cs307数据库\\project2\\src\\proxool.xml", false);
+//
+//            // 获取连接
+//            ProxoolUtil proxoolUtil = new ProxoolUtil();
+//            con = proxoolUtil.getConnection();
+//            if (con != null) {
+//                // 成功获取连接后的操作
+//                System.out.println("Successfully connected to the database "
+//                        + prop.getProperty("database") + " as " + prop.getProperty("user"));
+//                con.setAutoCommit(false);
+//            }
+//        } catch (ProxoolException | SQLException e) {
+//            System.err.println("Database connection failed");
+//            System.err.println(e.getMessage());
+//            System.exit(1);
+//        }
+//    }
 
     public static void setPrepareStatement_author() {
         try {
